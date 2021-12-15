@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Dentists" Class="DataClasses2DataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=10.159.102.21;Initial Catalog=Dentists;User ID=sa" SettingsObjectName="ControlDantist.Properties.Settings" SettingsPropertyName="DentistsConnectionString3" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.ViewPersonVipNet3" Member="ViewPersonVipNet3">
+    <Type Name="ViewPersonVipNet3">
+      <Column Name="id_льготник" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Фамилия" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="Имя" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="Отчество" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ДатаРождения" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Улица" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="НомерДома" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="корпус" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="НомерКвартиры" Type="System.String" DbType="NChar(40)" CanBeNull="true" />
+      <Column Name="СерияДокумента" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
+      <Column Name="НомерДокумента" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
+      <Column Name="СуммаАктаВыполненныхРабот" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="ДатаАкта" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="id_район" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Наименование" Type="System.String" DbType="NChar(250)" CanBeNull="true" />
+      <Column Name="NameRegion" Type="System.String" DbType="NVarChar(80)" CanBeNull="true" />
+      <Column Name="id_насПункт" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="НомерАкта" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="ДатаПодписания" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>
