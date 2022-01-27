@@ -46,12 +46,12 @@ namespace ControlDantist.ValidateRegistrProject
                 sKey = dStringConnect.Key.Trim();
 
                 // Отключим проверку по ЭСРН.
-                continue;
+                //continue;
 
                 //// TODO: Отключим районы.
                 //////Оставим участок кода для отработки быстроого подключения
                 /////// К нужному району.
-                //if (sKey.Trim() != "Ленинский".Trim())
+                //if (sKey.Trim() != "Балаковоский".Trim())
                 //{
 
                 //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.

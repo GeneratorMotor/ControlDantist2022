@@ -18,6 +18,10 @@ namespace ControlDantist
 {
     public partial class FormFIndVAlidTrueCOntracts : Form
     {
+        // Делегат.
+        //private delegate List<T> AsyncDelegateLoad(IEnumerable<T> queryCollection)
+        //    where T : class
+
         public FormFIndVAlidTrueCOntracts()
         {
             InitializeComponent();
@@ -32,9 +36,6 @@ namespace ControlDantist
         {
             // Временный cписок содержащий все найденные договора.
             List<ValideContract> listTempDisplay = new List<ValideContract>();
-
-            // Переменная для хранения номера договора который необходимо найти.
-            //string numContract = this.textBox1.Text;
 
             // Поиск льготника прошедшего проверку по номеру договора.
             IFindPerson findPerson = new FindContractTo2019(numContract,flagValidate);
@@ -874,6 +875,12 @@ namespace ControlDantist
                 fdc.IdДоговор = idДоговор;
                 fdc.Show();
             }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            // Здесь будем тестировать async методы.
+            //IAsyncResult
         }
     }
 }

@@ -40,6 +40,7 @@ using ControlDantist.ClassErrors;
 using ControlDantist.Querys;
 using ControlDantist.ReportCountYear;
 using ControlDantist.ReportFill;
+using ControlDantist.FactorySqlQuery;
 
 
 
@@ -3592,7 +3593,24 @@ namespace ControlDantist
 
         private void информацияПоБесплатномуЗубопротезированиюToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FormReportPrint formPrint = new FormReportPrint();
+            // Создадим креатор для формирования SQL запроса, для отчета
+            // по стоматологиям по количеству договоров.
+
+            // ПОлучим текущий год.
+            int iYear = DateTime.Now.Year;
+
+            // Получим дату начала и окончания отчета.
+            DateTime dateStart = new DateTime(iYear, 1, 1);
+            DateTime dateEnd = new DateTime(iYear, 12, 31);
+
+            // Представим дату начала и окончания отчета в представлении SQL сервера.
+            string strDateStart = Время.Дата(dateStart.ToShortDateString());
+            string strDateEnd = Время.Дата(dateEnd.ToShortDateString());
+
+            // Формируем SQl запрос для формирования данных для отчета.
+            IQueryFactory queryCreatorInformStomatolog = new SqlQueryForReportInformStomatolog(strDateStart, strDateEnd);
+            
+            FormReportPrint formPrint = new FormReportPrint(queryCreatorInformStomatolog);
             formPrint.Show();
         }
 

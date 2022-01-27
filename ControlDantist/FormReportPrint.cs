@@ -8,14 +8,20 @@ using System.Text;
 using System.Windows.Forms;
 using ControlDantist.Repozirories;
 using ControlDantist.Reports;
+using ControlDantist.Classes;
+using ControlDantist.FactorySqlQuery;
 
 namespace ControlDantist
 {
     public partial class FormReportPrint : Form
     {
-        public FormReportPrint()
+        private IQueryFactory queryCreatorInformStomatolog;
+
+        public FormReportPrint(IQueryFactory queryCreatorInformStomatolog)
         {
             InitializeComponent();
+
+            this.queryCreatorInformStomatolog = queryCreatorInformStomatolog;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -25,9 +31,13 @@ namespace ControlDantist
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
-            // Получение данных из базы данных.
-            ReportYearRepozitory repoz = new ReportYearRepozitory();
-            DataTable dataReport = repoz.GetData();
+
+           // Получим SQL строку для получения исходных данных для отчета.
+            ICreateSqlQuery qf = queryCreatorInformStomatolog.GetSqlQuery();
+            var sqlString = qf.SqlQuery();
+
+            // Получим DataTable данных для отчета.
+            DataTable dataReport = ТаблицаБД.GetTableSQL(qf.SqlQuery(), "Report");
 
             // Коллекция классов описывающая отчет.
             ReportDataToList reportToList = new ReportDataToList();
@@ -38,7 +48,6 @@ namespace ControlDantist
 
                 // Передадим данные для отчета в фабричный метод.
                 PrintReportForYear reportForYear = new PrintReportForYear();
-                //ReportInformToYearM reportForYear = new ReportInformToYearM();
                 reportForYear.Print(listDataReport);
                
             }

@@ -57,5 +57,10 @@ namespace ControlDantist
         {
             this.Close();
         }
+
+        private void FiltrPersonForVipNet_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

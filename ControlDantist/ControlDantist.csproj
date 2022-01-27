@@ -445,6 +445,10 @@
     <Compile Include="ErrorHandlid\WriteErrorFileText.cs" />
     <Compile Include="ExceptionClassess\ExceptionNoPreferentCategory.cs" />
     <Compile Include="ExceptionClassess\ValidErrorPerson.cs" />
+    <Compile Include="FactorySqlQuery\ICreateSqlQuery.cs" />
+    <Compile Include="FactorySqlQuery\IQueryFactory.cs" />
+    <Compile Include="FactorySqlQuery\QuerySqlReportInformStomatolog.cs" />
+    <Compile Include="FactorySqlQuery\SqlQueryForReportInformStomatolog.cs" />
     <Compile Include="FilesRegistr\FileRegistrCopy.cs" />
     <Compile Include="FiltrPersonForVipNet.cs">
       <SubType>Form</SubType>

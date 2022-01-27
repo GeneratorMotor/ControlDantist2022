@@ -300,7 +300,7 @@ namespace ControlDantist.Reports
                 // Сумма заключенных договоров.
                 if (item.СуммаЗаключенныхДоговоров > 0)
                 {
-                    WorksheetCell myCell6 = rowT.Cells.Add(Math.Round(item.СуммаЗаключенныхДоговоров/1000,6).ToString());
+                    WorksheetCell myCell6 = rowT.Cells.Add(Math.Round(item.СуммаЗаключенныхДоговоров/1000,6).ToString("C"));
                     myCell6.Index = 6;
                     //cellFG.MergeAcross = 1;
                     myCell6.StyleID = "HeaderStyle2";
@@ -332,7 +332,7 @@ namespace ControlDantist.Reports
                 // Сумма договоров поступивших на оплату.
                 if (item.СуммаДоговороПоступившихНаОплату > 0)
                 {
-                    WorksheetCell myCell8 = rowT.Cells.Add(Math.Round(item.СуммаДоговороПоступившихНаОплату/1000,6).ToString());
+                    WorksheetCell myCell8 = rowT.Cells.Add(Math.Round(item.СуммаДоговороПоступившихНаОплату/1000,6).ToString("C"));
                     myCell8.Index = 8;
                     //cellFG.MergeAcross = 1;
                     myCell8.StyleID = "HeaderStyle2";
@@ -385,7 +385,7 @@ namespace ControlDantist.Reports
              сellCount5.Index = 5;
              сellCount5.StyleID = "HeaderStyle2";
 
-             WorksheetCell сellCount6 = rowCount.Cells.Add(listData.Sum(w =>Math.Round(w.СуммаЗаключенныхДоговоров/1000,6)).ToString());
+             WorksheetCell сellCount6 = rowCount.Cells.Add(listData.Sum(w =>Math.Round(w.СуммаЗаключенныхДоговоров/1000,6)).ToString("C"));
              сellCount6.Index = 6;
              сellCount6.StyleID = "HeaderStyle2";
 
@@ -393,7 +393,7 @@ namespace ControlDantist.Reports
              сellCount7.Index = 7;
              сellCount7.StyleID = "HeaderStyle2";
 
-             WorksheetCell сellCount8 = rowCount.Cells.Add(listData.Sum(w => Math.Round(w.СуммаДоговороПоступившихНаОплату/1000,6)).ToString());
+             WorksheetCell сellCount8 = rowCount.Cells.Add(listData.Sum(w => Math.Round(w.СуммаДоговороПоступившихНаОплату/1000,6)).ToString("C"));
              сellCount8.Index = 8;
              сellCount8.StyleID = "HeaderStyle2";
 

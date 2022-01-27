@@ -24,9 +24,9 @@ namespace ControlDantist.Repozirories
                 ReportYear itm = new ReportYear();
                 itm.Район = row["Район"].ToString();
                 itm.Поликлинника = row["Поликлинника"].ToString();
-                if (row["Пропускная способность за 2019 год"] != DBNull.Value)
+                if (row["Пропускная способность за год"] != DBNull.Value)
                 {
-                    itm.ПропускнаяСпособностьГод = Convert.ToInt16(row["Пропускная способность за 2019 год"]);
+                    itm.ПропускнаяСпособностьГод = Convert.ToInt16(row["Пропускная способность за год"]);
                 }
                 else
                 {

@@ -103,8 +103,18 @@ namespace ControlDantist
 
                         if (city != null)
                         {
-                            //отобразим адрес
-                            this.lblStreet.Text = "н.п. " + city?.Наименование?.Trim()?? "" + "  ул. " + person?.улица?.Trim()??"";
+
+                        //var asd = contract.AddressPerson
+
+                        //отобразим адрес
+
+                        StringBuilder strAddr = new StringBuilder();
+                        strAddr.Append("н.п. ");
+                        strAddr.Append(city?.Наименование?.Trim() ?? "" );
+                        strAddr.Append("  ул. ");
+                        strAddr.Append(person?.улица?.Trim() ?? "");
+
+                        this.lblStreet.Text = strAddr.ToString().Trim(); // "н.п. " + city?.Наименование?.Trim() ?? " " + "  ул. " + person?.улица?.Trim();//??"";
                             this.lblKorp.Text = "дом " + person?.НомерДома?? "";
                             this.lblHous.Text = "корп. " + person?.корпус?? "";
                             this.lblEpartment.Text = "кв. " + person?.НомерКвартиры?? "";
