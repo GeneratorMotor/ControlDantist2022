@@ -3610,7 +3610,10 @@ namespace ControlDantist
             // ‘ормируем SQl запрос дл€ формировани€ данных дл€ отчета.
             IQueryFactory queryCreatorInformStomatolog = new SqlQueryForReportInformStomatolog(strDateStart, strDateEnd);
             
+            // ‘орма дл€ вывода дииалога отправки на печать.
             FormReportPrint formPrint = new FormReportPrint(queryCreatorInformStomatolog);
+            
+            // ќтображение формы.
             formPrint.Show();
         }
 
@@ -5833,6 +5836,12 @@ namespace ControlDantist
             }
             return l1;
 
+        }
+
+        private void общийЋимитƒенежных—редств«а√одToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormLimitYear formLimitYear = new FormLimitYear();
+            formLimitYear.Show();
         }
     }
 }

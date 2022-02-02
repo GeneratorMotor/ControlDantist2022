@@ -14,6 +14,12 @@ namespace ControlDantist.Reports
     /// </summary>
     public class ReportInformToYear:IReport
     {
+        decimal summLimitYear = 0.0m;
+
+        public ReportInformToYear(decimal summLimitYear)
+        {
+            this.summLimitYear = summLimitYear;
+        }
 
         public void Print(List<Repozirories.ReportYear> listData)
         {
@@ -300,7 +306,7 @@ namespace ControlDantist.Reports
                 // Сумма заключенных договоров.
                 if (item.СуммаЗаключенныхДоговоров > 0)
                 {
-                    WorksheetCell myCell6 = rowT.Cells.Add(Math.Round(item.СуммаЗаключенныхДоговоров/1000,6).ToString("C"));
+                    WorksheetCell myCell6 = rowT.Cells.Add(Math.Round(item.СуммаЗаключенныхДоговоров/1000,6).ToString());
                     myCell6.Index = 6;
                     //cellFG.MergeAcross = 1;
                     myCell6.StyleID = "HeaderStyle2";
@@ -332,7 +338,7 @@ namespace ControlDantist.Reports
                 // Сумма договоров поступивших на оплату.
                 if (item.СуммаДоговороПоступившихНаОплату > 0)
                 {
-                    WorksheetCell myCell8 = rowT.Cells.Add(Math.Round(item.СуммаДоговороПоступившихНаОплату/1000,6).ToString("C"));
+                    WorksheetCell myCell8 = rowT.Cells.Add(Math.Round(item.СуммаДоговороПоступившихНаОплату/1000,6).ToString());
                     myCell8.Index = 8;
                     //cellFG.MergeAcross = 1;
                     myCell8.StyleID = "HeaderStyle2";
@@ -385,7 +391,7 @@ namespace ControlDantist.Reports
              сellCount5.Index = 5;
              сellCount5.StyleID = "HeaderStyle2";
 
-             WorksheetCell сellCount6 = rowCount.Cells.Add(listData.Sum(w =>Math.Round(w.СуммаЗаключенныхДоговоров/1000,6)).ToString("C"));
+             WorksheetCell сellCount6 = rowCount.Cells.Add(listData.Sum(w =>Math.Round(w.СуммаЗаключенныхДоговоров/1000,6)).ToString());
              сellCount6.Index = 6;
              сellCount6.StyleID = "HeaderStyle2";
 
@@ -393,7 +399,7 @@ namespace ControlDantist.Reports
              сellCount7.Index = 7;
              сellCount7.StyleID = "HeaderStyle2";
 
-             WorksheetCell сellCount8 = rowCount.Cells.Add(listData.Sum(w => Math.Round(w.СуммаДоговороПоступившихНаОплату/1000,6)).ToString("C"));
+             WorksheetCell сellCount8 = rowCount.Cells.Add(listData.Sum(w => Math.Round(w.СуммаДоговороПоступившихНаОплату/1000,6)).ToString());
              сellCount8.Index = 8;
              сellCount8.StyleID = "HeaderStyle2";
 
@@ -407,7 +413,7 @@ namespace ControlDantist.Reports
              сellCount10.StyleID = "HeaderStyle2";
 
             // Сумма лимита.
-             decimal sumYear = 403132200;
+            decimal sumYear = this.summLimitYear;// 403132200;
              //decimal sumYear = 352398530;
 
              WorksheetCell сellCount11 = rowCount.Cells.Add(Math.Round(sumYear/1000,6).ToString());

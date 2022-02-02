@@ -35,6 +35,7 @@ namespace ControlDantist.FactorySqlQuery
 
                           RIGHT OUTER JOIN
                           dbo.ПоликлинникиИнн ON dbo.ПоликлинникиИнн.idRegion = dbo.РайонОбласти.idRegion
+                          where dbo.ПоликлинникиИнн.flagOn = 1 -- фильтр по поликлинникам
                           GROUP BY dbo.ПоликлинникиИнн.F2, dbo.ПоликлинникиИнн.LimitYearPiple, dbo.РайонОбласти.NameRegion, dbo.ПоликлинникиИнн.F3, dbo.ПоликлинникиИнн.SerialNumber) AS TabNameHospital
 
                           LEFT OUTER JOIN

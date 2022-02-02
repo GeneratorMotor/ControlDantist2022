@@ -153,6 +153,24 @@
     <Compile Include="ClassErrors\ConvertPerson.cs" />
     <Compile Include="ClassErrors\ConvertДоговор.cs" />
     <Compile Include="ClassErrors\ConvertУслуги.cs" />
+    <Compile Include="ClassessLimitYear\CreateLimitYear.cs" />
+    <Compile Include="ClassessLimitYear\DeleteLimited.cs" />
+    <Compile Include="ClassessLimitYear\GetQueryStringForLimit.cs" />
+    <Compile Include="ClassessLimitYear\GetQueryStringLimit.cs" />
+    <Compile Include="ClassessLimitYear\GetQueryStringYar.cs" />
+    <Compile Include="ClassessLimitYear\IGetSqlQuery.cs" />
+    <Compile Include="ClassessLimitYear\ILoadData.cs" />
+    <Compile Include="ClassessLimitYear\InsertLimit.cs" />
+    <Compile Include="ClassessLimitYear\ItemLimit.cs" />
+    <Compile Include="ClassessLimitYear\ItemYear.cs" />
+    <Compile Include="ClassessLimitYear\LoadDataFactory.cs" />
+    <Compile Include="ClassessLimitYear\LoadDataLimit.cs" />
+    <Compile Include="ClassessLimitYear\LoadDataYear.cs" />
+    <Compile Include="ClassessLimitYear\ILoadDateFactory.cs" />
+    <Compile Include="ClassessLimitYear\SqlGetLimit.cs" />
+    <Compile Include="ClassessLimitYear\SqlQueryLimitYear.cs" />
+    <Compile Include="ClassessLimitYear\SqlQueryYear.cs" />
+    <Compile Include="ClassessLimitYear\UpdateLimited.cs" />
     <Compile Include="Classes\ClassЗаписьБД.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -429,6 +447,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DataClasses4.dbml</DependentUpon>
     </Compile>
+    <Compile Include="DataTableClassess\GetTableSQL.cs" />
+    <Compile Include="DataTableClassess\ТаблицаSqlBd.cs" />
     <Compile Include="DisplayDatePerson\DatePersonForDisplay.cs" />
     <Compile Include="DisplayDatePerson\DisplayResultValidate.cs" />
     <Compile Include="DisplayDatePerson\ServicesError.cs" />
@@ -551,6 +571,12 @@
     </Compile>
     <Compile Include="FirstLoadHospital.Designer.cs">
       <DependentUpon>FirstLoadHospital.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormAddLimit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAddLimit.Designer.cs">
+      <DependentUpon>FormAddLimit.cs</DependentUpon>
     </Compile>
     <Compile Include="FormConfig.cs">
       <SubType>Form</SubType>
@@ -683,6 +709,12 @@
     </Compile>
     <Compile Include="FormLimitMoney.Designer.cs">
       <DependentUpon>FormLimitMoney.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormLimitYear.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLimitYear.Designer.cs">
+      <DependentUpon>FormLimitYear.cs</DependentUpon>
     </Compile>
     <Compile Include="FormMessage.cs">
       <SubType>Form</SubType>
@@ -894,6 +926,9 @@
     <Compile Include="ReportFill\FillContractNoAct.cs" />
     <Compile Include="ReportFill\FillLimit.cs" />
     <Compile Include="ReportFill\IFill.cs" />
+    <Compile Include="ReportStatisticLibrary\BuilderDataReport.cs" />
+    <Compile Include="ReportStatisticLibrary\IBuilderReport.cs" />
+    <Compile Include="ReportStatisticLibrary\ItemsFiltrHospital.cs" />
     <Compile Include="ReportStatistic\GetStatistic.cs" />
     <Compile Include="ReportStatistic\QueryBalanceStatistic.cs" />
     <Compile Include="Reports\AbstractFactory.cs" />
@@ -1073,6 +1108,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>FirstLoadHospital.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormAddLimit.resx">
+      <DependentUpon>FormAddLimit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormConfig.resx">
       <DependentUpon>FormConfig.cs</DependentUpon>
     </EmbeddedResource>
@@ -1146,6 +1184,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormLimitMoney.resx">
       <DependentUpon>FormLimitMoney.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormLimitYear.resx">
+      <DependentUpon>FormLimitYear.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormMessage.resx">
       <DependentUpon>FormMessage.cs</DependentUpon>

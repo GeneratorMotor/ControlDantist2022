@@ -9,10 +9,17 @@ namespace ControlDantist.Reports
 {
     public class PrintReportForYear : PrintReport
     {
+        private decimal limitYear = 0;
+
+        public PrintReportForYear(decimal limitYear)
+        {
+            this.limitYear = limitYear;
+        }
+
         public override void Print(List<ReportYear> listDate)
         {
             // Передадим данные на печать.
-            ReportInformToYear report = new ReportInformToYear();
+            ReportInformToYear report = new ReportInformToYear(this.limitYear);
 
             report.Print(listDate);
         }

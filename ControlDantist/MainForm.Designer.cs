@@ -79,6 +79,7 @@ namespace ControlDantist
             this.статистикаИнвентаризацияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.информацияПоБесплатномуЗубопротезированиюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.списокГражданVipNetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.статистикаКонецГодаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.конверторToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.конвертироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.залить2019ГодToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -95,7 +96,7 @@ namespace ControlDantist
             this.районыОбластиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.провестиПроверкуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.поискУчастиниковВОВToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.статистикаКонецГодаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -331,7 +332,8 @@ namespace ControlDantist
             this.изменитьДатыАктаToolStripMenuItem,
             this.включитьИзменениеСтоимостиДоговораToolStripMenuItem,
             this.отключитьПроверкуСерверовToolStripMenuItem,
-            this.лимитДенежныхСредствToolStripMenuItem});
+            this.лимитДенежныхСредствToolStripMenuItem,
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem});
             this.настToolStripMenuItem.Name = "настToolStripMenuItem";
             this.настToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
             this.настToolStripMenuItem.Text = "Настройка";
@@ -528,6 +530,13 @@ namespace ControlDantist
             this.списокГражданVipNetToolStripMenuItem.Text = "Список граждан VipNet";
             this.списокГражданVipNetToolStripMenuItem.Click += new System.EventHandler(this.списокГражданVipNetToolStripMenuItem_Click);
             // 
+            // статистикаКонецГодаToolStripMenuItem
+            // 
+            this.статистикаКонецГодаToolStripMenuItem.Name = "статистикаКонецГодаToolStripMenuItem";
+            this.статистикаКонецГодаToolStripMenuItem.Size = new System.Drawing.Size(363, 22);
+            this.статистикаКонецГодаToolStripMenuItem.Text = "Статистика конец года";
+            this.статистикаКонецГодаToolStripMenuItem.Click += new System.EventHandler(this.статистикаКонецГодаToolStripMenuItem_Click);
+            // 
             // конверторToolStripMenuItem
             // 
             this.конверторToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -651,12 +660,12 @@ namespace ControlDantist
             this.поискУчастиниковВОВToolStripMenuItem.Text = "Поиск участиников ВОВ";
             this.поискУчастиниковВОВToolStripMenuItem.Click += new System.EventHandler(this.поискУчастиниковВОВToolStripMenuItem_Click);
             // 
-            // статистикаКонецГодаToolStripMenuItem
+            // общийЛимитДенежныхСредствЗаГодToolStripMenuItem
             // 
-            this.статистикаКонецГодаToolStripMenuItem.Name = "статистикаКонецГодаToolStripMenuItem";
-            this.статистикаКонецГодаToolStripMenuItem.Size = new System.Drawing.Size(363, 22);
-            this.статистикаКонецГодаToolStripMenuItem.Text = "Статистика конец года";
-            this.статистикаКонецГодаToolStripMenuItem.Click += new System.EventHandler(this.статистикаКонецГодаToolStripMenuItem_Click);
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Name = "общийЛимитДенежныхСредствЗаГодToolStripMenuItem";
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Size = new System.Drawing.Size(367, 22);
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Text = "Лимит денежных средств за год";
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Click += new System.EventHandler(this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -747,5 +756,6 @@ namespace ControlDantist
         private System.Windows.Forms.ToolStripMenuItem поискУчастиниковВОВToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem залитьФайлыДляПроверкиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem статистикаКонецГодаToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem общийЛимитДенежныхСредствЗаГодToolStripMenuItem;
     }
 }
