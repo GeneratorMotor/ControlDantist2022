@@ -45,8 +45,9 @@ namespace ControlDantist.ValidateRegistrProject
                 string sKey = string.Empty;
                 sKey = dStringConnect.Key.Trim();
 
+                // TODO: Отключем проверку договоров.
                 // Отключим проверку по ЭСРН.
-                //continue;
+                continue;
 
                 //// TODO: Отключим районы.
                 //////Оставим участок кода для отработки быстроого подключения

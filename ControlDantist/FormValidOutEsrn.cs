@@ -375,19 +375,20 @@ namespace ControlDantist
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
 
-            //int idContract = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["IdContract"].Value);
-
             // Проверим значение флага проверки льготника по ЭСРН.
-            bool flagValidEsrn = Convert.ToBoolean(this.dataGridView1.CurrentRow.Cells["FlagValidEsrn"].Value);
+            var flagValidEsrn = Convert.ToBoolean(dataGridView1.CurrentRow.Cells["FlagValidEsrn"].Value);
 
             // Номер договора.
-            string numContract = this.dataGridView1.CurrentRow.Cells["НомерДоговора"].Value.ToString();
+            string numContract = dataGridView1.CurrentRow.Cells["НомерДоговора"].Value.ToString();
 
             // Получим текущий контракт.
             var currContract = listProjectContrats.Where(w => w.NumContract.Trim() == numContract.Trim()).FirstOrDefault();
 
             // Проверяем значение флага проверки медицинских услуг.
             bool flagValidServices = Convert.ToBoolean(this.dataGridView1.CurrentRow.Cells["FlagValidServices"].Value);
+
+            // Проверим значение флага проверки льготника по ЭСРН.
+            var flagValidContract = Convert.ToBoolean(dataGridView1.CurrentRow.Cells["FlagSaveContract"].Value);
 
             // Если Установлен флаг проверки в True.
             if (flagValidEsrn == true)
@@ -396,8 +397,6 @@ namespace ControlDantist
                 if (currContract != null)
                 {
                     currContract.FlagValidateEsrn = true;
-                    //currContract..FlagValidPersonFioEsrn = true;
-                    //currContract.FlagValidPersonPassword = true;
                 }
             }
             else
@@ -407,8 +406,6 @@ namespace ControlDantist
                 {
                     // То установим, что льгоник не прошел проверку.
                     currContract.FlagValidateEsrn = false;
-                    //currContract.FlagValidPersonFioEsrn = false;
-                    //currContract.FlagValidPersonPassword = false;
                 }
             }
 
@@ -430,15 +427,31 @@ namespace ControlDantist
                 }
             }
 
-            // Установим флаг прошедшего проверку.
-            // Обьявим переменную типа делегат.
-            SetValidToReestr svDel;
+            if(flagValidContract == true)
+            {
+                if(currContract != null)
+                {
+                    currContract.FlagValidContract = true;
+                }
+            }
+            else
+            {
+                if (currContract != null)
+                {
+                    // Кстановим не прошёл проверку по медицинским услугам.
+                    currContract.FlagValidContract = false;
+                }
+            }
 
-            // Прсвим выполняемый метод.
-            svDel = SetValidateContract;
+            //// Установим флаг прошедшего проверку.
+            //// Обьявим переменную типа делегат.
+            //SetValidToReestr svDel;
 
-            // Выполним метод.
-            svDel.Invoke(currContract);
+            //// Прсвим выполняемый метод.
+            //svDel = SetValidateContract;
+
+            //// Выполним метод.
+            //svDel.Invoke(currContract);
 
         }
 
@@ -451,10 +464,11 @@ namespace ControlDantist
             // Если количество догооворов из файла реестра > 0.
             if (listDoc != null && listDoc.Count > 0)
             {
+                //TODO: Снят запрет на печать реестра договоров
                 // Выведим список совподений договров на бумагу в Word.
                 WordReport wordPrint = new WordReport(listDoc);
 
-                // Выведим список проектов договоров на печать.
+                //// Выведим список проектов договоров на печать.
                 DocPrint docPrint = new DocPrint(wordPrint);
                 docPrint.Execute();
             }
@@ -470,13 +484,17 @@ namespace ControlDantist
                 return;
             }
 
+            int iCOunt = 0;
+
             // Выполним в единой транзакции запись проектов договоров.
             using (DContext dc = new DContext(ConnectDB.ConnectionString()))
             {
+
                 using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.Serializable }))
                 {
-                    try
-                    {
+
+                    //try
+                    //{
                         // Проходимся по списку договоров.
                         foreach (var itm in this.listProjectContrats)
                         {
@@ -573,8 +591,10 @@ namespace ControlDantist
                                 }
                             }
 
+                        int testICOunt = iCOunt++;
+
                             // ПРоверим записан ли данный льготник из реестра проектов договров в БД.
-                            IValidBD<ТЛЬготник> validBPerson = new PersonWriteDB(dc, тЛЬготник);
+                            IValidBD<ТЛЬготник> validBPerson = new PersonWriteDB(dc, тЛЬготник, testICOunt);
 
                             // Результат есть льготник в БД или его нет.
                             bool flagWritePersonDB = validBPerson.Validate();
@@ -651,16 +671,14 @@ namespace ControlDantist
                         // TODO: Запись не произволдиться, закомментировано сохранение транзакции.
                         // Завершшим транзакцию.
                         scope.Complete();
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    // Откатим транзакцию.
+                    //    scope.Dispose();
 
-
-                    }
-                    catch (Exception ex)
-                    {
-                        // Откатим транзакцию.
-                        scope.Dispose();
-
-                        MessageBox.Show("Ошибка в записи - " + ex.Message);
-                    }
+                    //    MessageBox.Show("Ошибка в записи - " + ex.Message);
+                    //}
 
                 }
 
@@ -737,33 +755,6 @@ namespace ControlDantist
             // Передадим в форму список проектов договоров.
             formInfoЛьготник.Contracts = this.listProjectContrats.ToList();
             formInfoЛьготник.Show();
-
-            //this.dataGridView1.ClearSelection();
-            //this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Selected = true;
-            //this.dataGridView1.CurrentCell = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-
-            //DataGridViewRow rows = this.dataGridView1.Rows[e.RowIndex];
-
-            ////foreach(DataGridViewCell cell in rows.Cells)
-            ////{
-            ////    var asd = cell.Value;
-            ////}
-
-            ////получим номер договора
-            ////this.ПроектыДоговоров;
-            //string numDog = rows.Cells[1].Value.ToString().Trim();
-
-            //Unload vr = this.ВыгрузкаПроектДоговоров[numDog];
-
-            ////отобразим форму
-            //FormInfoЛьготник info = new FormInfoЛьготник();
-
-            ////передадим данные в форму
-            //info.Unloads = vr;
-
-            ////отобразим форму
-            //info.Show();
         }
     }
 }

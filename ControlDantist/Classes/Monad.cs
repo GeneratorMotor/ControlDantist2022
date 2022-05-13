@@ -126,5 +126,19 @@ namespace ControlDantist.Classes
             return (bool)input;
         }
 
+        public static string DoStringNull(this string input)
+        {
+            var asd = "";
+
+            if(input != null)
+            {
+                return input;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
     }
 }

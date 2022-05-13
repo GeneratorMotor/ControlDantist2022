@@ -25,6 +25,18 @@ namespace ControlDantist
             this.comboBox1.DataSource = unit.RegionRepository.GetAll();
             this.comboBox1.ValueMember = "idRegion";
             this.comboBox1.DisplayMember = "NameRegion";
+
+            // Получим текущую дату.
+            DateTime dateTime = DateTime.Today;
+
+            // Получим текущий год.
+            int yearToday = dateTime.Year;
+
+            // Получим дату на 1 января текущего года.
+            DateTime dateStart = new DateTime(yearToday, 1, 1);
+
+            // Установи первое января текущего года.
+            this.dateTimePicker1.Value = dateStart;
         }
 
         private void btnYes_Click(object sender, EventArgs e)

@@ -20,7 +20,6 @@ using System.Globalization;
 using System.Transactions;
 
 using ControlDantist.ClassValidRegions;
-using ControlDantist.Repozirories;
 
 using ControlDantist.Repository;
 using ControlDantist.ReceptionDocuments;

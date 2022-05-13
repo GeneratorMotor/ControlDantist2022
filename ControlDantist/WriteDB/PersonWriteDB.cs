@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ControlDantist.DataBaseContext;
+using ControlDantist.Classes;
 
 namespace ControlDantist.WriteDB
 {
@@ -14,10 +15,14 @@ namespace ControlDantist.WriteDB
 
         private bool flafValide = false;
 
-        public PersonWriteDB(DContext dc,ТЛЬготник person)
+        private int iCount = 0;
+
+        public PersonWriteDB(DContext dc,ТЛЬготник person, int testICOunt)
         {
             this.person = person;
             this.dc = dc;
+
+            iCount = testICOunt;
         }
 
         public ТЛЬготник Get()
@@ -36,8 +41,10 @@ namespace ControlDantist.WriteDB
                 person.Отчество = "";
              }
 
-             // Поиск льготника.
-             var persons = dc.ТабЛьгоготник.Where(w => w.Фамилия.Trim().ToLower() == person.Фамилия.Trim().ToLower() && w.Имя.Trim().ToLower() == person.Имя.ToLower().Trim() && w.Отчество.Trim().ToLower() == person.Отчество.Trim().ToLower() && w.ДатаРождения == person.ДатаРождения).OrderByDescending(w=>w.id_льготник).FirstOrDefault();
+            var asd = iCount;
+
+            // Поиск льготника.
+            var persons = dc.ТабЛьгоготник.Where(w => w.Фамилия.Trim().ToLower() == person.Фамилия.Trim().ToLower() && w.Имя.Trim().ToLower() == person.Имя.ToLower().Trim() && w.Отчество.Trim().ToLower() == person.Отчество.Trim().ToLower() && w.ДатаРождения == person.ДатаРождения).OrderByDescending(w=>w.id_льготник).FirstOrDefault();
 
             // Если льготников нет в БД значит его можно писать в БД.
             if (persons != null)

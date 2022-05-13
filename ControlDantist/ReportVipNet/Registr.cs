@@ -47,11 +47,14 @@ namespace ControlDantist.ReportVipNet
         {
             bool flagLetter = false;
 
+            DateTime dt = DateTime.Today;
+            int year = dt.Year;
+
             //DataClasses2DataContext dataClasses2 = new DataClasses2DataContext();
 
             ControlDantist.Repository.DataClasses2DataContext dc2 = new Repository.DataClasses2DataContext();
 
-            var persons = dc2.ViewPersonVipNet3.Where(w => w.id_район == this.IdRegion).ToList();
+            var persons = dc2.ViewPersonVipNet3.Where(w => w.id_район == this.IdRegion && w.ДатаАкта.Value.Year == year).ToList();
 
             // 
             //var persons = unit.RepositoryViewPersonVipNet2.GetDocs(this.IdRegion, this.DateStartPeriod.Date, this.DateEndPeriod.Date);
@@ -61,7 +64,7 @@ namespace ControlDantist.ReportVipNet
                 flagLetter = true;
 
                 //ConvertToPerson(persons);
-                ConvertToPerson();
+                ConvertToPerson(year);
 
                 SaveFileDialog fileDialog = new SaveFileDialog();
 
@@ -77,6 +80,9 @@ namespace ControlDantist.ReportVipNet
 
                 if (result == DialogResult.OK)
                 {
+
+                    var asd = listPerson;
+
                     // Создадим экземпляр сохранения файлов.
                     IFile fileExcel = new ExcelFileSave(listPerson);
 
@@ -103,11 +109,11 @@ namespace ControlDantist.ReportVipNet
         /// </summary>
         /// <returns></returns>
         //private void ConvertToPerson(IEnumerable<ViewPersonVipNet2> listPersons)
-        private void ConvertToPerson()
+        private void ConvertToPerson(int year)
         {
             ControlDantist.Repository.DataClasses2DataContext dc2 = new Repository.DataClasses2DataContext();
 
-            var persons = dc2.ViewPersonVipNet3.Where(w => w.id_район == this.IdRegion).ToList();
+            var persons = dc2.ViewPersonVipNet3.Where(w => w.id_район == this.IdRegion && w.ДатаАкта.Value.Year == year).ToList();
 
             foreach (var itm in persons)
             {
