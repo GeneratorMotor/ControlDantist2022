@@ -33,10 +33,6 @@ namespace ControlDantist.ValidPersonContract
                 return;
             }
 
-            //contr = new PrintContractsValidate();
-
-            
-
             this.listContracts = new List<ValidItemsContract>();
         }
 

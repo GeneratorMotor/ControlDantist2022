@@ -45,5 +45,10 @@ namespace ControlDantist.ValidPersonContract
         /// Флаг указывающий анулирован договор или нет.
         /// </summary>
         public bool flagАнулирован { get; set; }
+
+        /// <summary>
+        /// Фланг указывающй что договор имеет акт.
+        /// </summary>
+        public bool AlgAct { get; set; }
     }
 }

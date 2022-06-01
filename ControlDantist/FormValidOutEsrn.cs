@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
@@ -18,6 +18,11 @@ using ControlDantist.LetterClassess;
 using DantistLibrary;
 using ControlDantist.DataBaseContext;
 using ControlDantist.MedicalServices;
+using ControlDantist.FactoryClass;
+using ControlDantist.ConvertDataTableToList;
+using ControlDantist.ClassessForDB;
+using ControlDantist.PatternSql;
+using ControlDantist.DisplayLetter;
 using ControlDantist.WriteDB;
 
 
@@ -457,24 +462,59 @@ namespace ControlDantist
 
         private void button1_Click(object sender, EventArgs e)
         {
-            // Получим список договоров из файла реестра для документа для отображения повторных договоров.
-            ValidateContractPerson vclPrint = new ValidateContractPerson(this.listProjectContrats.ToList());
-            List<PrintContractsValidate> listDoc = vclPrint.GetContract();
+            // Не красиво он это фабрика классов для конвертирования входной информации для отчета.
+            FactoryFind factoryClass = new FactoryFind();
 
-            // Если количество догооворов из файла реестра > 0.
-            if (listDoc != null && listDoc.Count > 0)
-            {
-                //TODO: Снят запрет на печать реестра договоров
-                // Выведим список совподений договров на бумагу в Word.
-                WordReport wordPrint = new WordReport(listDoc);
+            // Получим из списка договоров, список льготников.
+            IConvertRegistr<PersonContract> convertRegistr = factoryClass.ConvertRegistrToPerson(this.listProjectContrats.ToList());
 
-                //// Выведим список проектов договоров на печать.
-                DocPrint docPrint = new DocPrint(wordPrint);
-                docPrint.Execute();
-            }
+            // Фабрика для SQL запроса поиска ранее заключенных договаров.
+            FactoryQuery factoryQuery = new FactoryQuery();
 
-            // Вывидем диалоговое окно с предложением о записи проектов договоров.
-            //Предложим запись в БД 
+            // Фабрика проверки и конвертирования реестров.
+            FactoryDateLetter factoryDateLetter = new FactoryDateLetter();
+
+            IValidateContract validContracts =  factoryDateLetter.ValidateContractRegistr(convertRegistr, factoryQuery, ConnectDB.ConnectionString());
+
+
+            // Тест подключ
+            //ValidContracts validContracts = new ValidContracts(convertRegistr, factoryQuery, ConnectDB.ConnectionString());
+
+            // Получим данные по ранее заключенным договорам.
+            IEnumerable<DataPerson> dataPeople = validContracts.Validate();
+
+            IFilterContract filterContract = new FiltrContract(dataPeople);
+            IEnumerable<PrintContractsValidate> listDocum = filterContract.GetContracts();
+
+            // Список льготников.
+            //var listContract = convertRegistr.GetPersons();
+
+            // Проверим каждого льготника на наличие договоров.
+
+
+            //var listContract = this.listProjectContrats.ToList();
+
+            //string sTest = "";
+
+            ////// Получим список договоров из файла реестра для документа для отображения повторных договоров.
+            //ValidateContractPerson vclPrint = new ValidateContractPerson(this.listProjectContrats.ToList());
+            //List<PrintContractsValidate> listDoc = vclPrint.GetContract();
+
+            //// Если количество догооворов из файла реестра > 0.
+            //if (listDoc != null && listDoc.Count > 0)
+            //{
+            //    //TODO: Снят запрет на печать реестра договоров
+            //    // Выведим список совподений договров на бумагу в Word.
+            //WordReport wordPrint = new WordReport(listDoc);
+            WordReport wordPrint = new WordReport(listDocum.ToList());
+
+            //// Выведим список проектов договоров на печать.
+            DocPrint docPrint = new DocPrint(wordPrint);
+            docPrint.Execute();
+            //}
+
+            //// Вывидем диалоговое окно с предложением о записи проектов договоров.
+            ////Предложим запись в БД 
             FormDalogWriteBD formDialog = new FormDalogWriteBD();
             formDialog.ShowDialog();
 
@@ -493,8 +533,8 @@ namespace ControlDantist
                 using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.Serializable }))
                 {
 
-                    //try
-                    //{
+                    try
+                    {
                         // Проходимся по списку договоров.
                         foreach (var itm in this.listProjectContrats)
                         {
@@ -591,7 +631,7 @@ namespace ControlDantist
                                 }
                             }
 
-                        int testICOunt = iCOunt++;
+                            int testICOunt = iCOunt++;
 
                             // ПРоверим записан ли данный льготник из реестра проектов договров в БД.
                             IValidBD<ТЛЬготник> validBPerson = new PersonWriteDB(dc, тЛЬготник, testICOunt);
@@ -661,24 +701,24 @@ namespace ControlDantist
 
                             //if (formDialog.DialogResult == System.Windows.Forms.DialogResult.OK)
                             //{
-                            
-                           
+
+
                             //}
 
 
                         }
 
-                        // TODO: Запись не произволдиться, закомментировано сохранение транзакции.
-                        // Завершшим транзакцию.
-                        scope.Complete();
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    // Откатим транзакцию.
-                    //    scope.Dispose();
+                    // TODO: Запись не произволдиться, закомментировано сохранение транзакции.
+                    // Завершшим транзакцию.
+                    scope.Complete();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Откатим транзакцию.
+                        scope.Dispose();
 
-                    //    MessageBox.Show("Ошибка в записи - " + ex.Message);
-                    //}
+                        MessageBox.Show("Ошибка в записи - " + ex.Message);
+                    }
 
                 }
 

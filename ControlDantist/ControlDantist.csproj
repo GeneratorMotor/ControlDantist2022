@@ -153,6 +153,14 @@
     <Compile Include="ClassErrors\ConvertPerson.cs" />
     <Compile Include="ClassErrors\ConvertДоговор.cs" />
     <Compile Include="ClassErrors\ConvertУслуги.cs" />
+    <Compile Include="ClassessForDB\ConvertDataLetter.cs" />
+    <Compile Include="ClassessForDB\DataPerson.cs" />
+    <Compile Include="ClassessForDB\DataPersonContract.cs" />
+    <Compile Include="ClassessForDB\IConvertDataLetter.cs" />
+    <Compile Include="ClassessForDB\IGetDataTableSQL.cs" />
+    <Compile Include="ClassessForDB\INumContract.cs" />
+    <Compile Include="ClassessForDB\PersonContract.cs" />
+    <Compile Include="ClassessForDB\TableBD.cs" />
     <Compile Include="ClassessLimitYear\CreateLimitYear.cs" />
     <Compile Include="ClassessLimitYear\DeleteLimited.cs" />
     <Compile Include="ClassessLimitYear\GetQueryStringForLimit.cs" />
@@ -394,6 +402,8 @@
     <Compile Include="ClassValidRegions\PersonValidEsrn.cs" />
     <Compile Include="ClassValidRegions\ValidatePrefCategoryList.cs" />
     <Compile Include="ClassValidRegions\WriteSity.cs" />
+    <Compile Include="ConvertDataTableToList\GetPersonRegistr.cs" />
+    <Compile Include="ConvertDataTableToList\IConvertRegistr.cs" />
     <Compile Include="DataBaseContext\DContext.cs" />
     <Compile Include="DataBaseContext\IDatarepository.cs" />
     <Compile Include="DataBaseContext\IFind.cs" />
@@ -453,6 +463,11 @@
     <Compile Include="DisplayDatePerson\DisplayResultValidate.cs" />
     <Compile Include="DisplayDatePerson\ServicesError.cs" />
     <Compile Include="DisplayDatePerson\ShowDifference.cs" />
+    <Compile Include="DisplayLetter\FactoryDateLetter.cs" />
+    <Compile Include="DisplayLetter\FiltrContract.cs" />
+    <Compile Include="DisplayLetter\IFilterContract.cs" />
+    <Compile Include="DisplayLetter\IValidateContract.cs" />
+    <Compile Include="DisplayLetter\ValidContracts.cs" />
     <Compile Include="DisplayRegistr\DisplayPerson.cs" />
     <Compile Include="DisplayRegistr\DisplayRegistrProject.cs" />
     <Compile Include="DisplayRegistr\ResultValidEsrnDisplay.cs" />
@@ -465,6 +480,7 @@
     <Compile Include="ErrorHandlid\WriteErrorFileText.cs" />
     <Compile Include="ExceptionClassess\ExceptionNoPreferentCategory.cs" />
     <Compile Include="ExceptionClassess\ValidErrorPerson.cs" />
+    <Compile Include="FactoryClass\FactoryFind.cs" />
     <Compile Include="FactorySqlQuery\ICreateSqlQuery.cs" />
     <Compile Include="FactorySqlQuery\IQueryFactory.cs" />
     <Compile Include="FactorySqlQuery\QuerySqlReportInformStomatolog.cs" />
@@ -882,6 +898,7 @@
     <Compile Include="MyMessage.Designer.cs">
       <DependentUpon>MyMessage.cs</DependentUpon>
     </Compile>
+    <Compile Include="PatternSql\FactoryQuery.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Querys\FindActForCnotractDate.cs" />
@@ -889,6 +906,10 @@
     <Compile Include="Querys\FindPaysContract.cs" />
     <Compile Include="Querys\IQuery.cs" />
     <Compile Include="Querys\QueryContractNoAct.cs" />
+    <Compile Include="Querys\QueryFindContractFio.cs" />
+    <Compile Include="Querys\QueryFindContractFio21.cs" />
+    <Compile Include="Querys\QueryFindContractFn.cs" />
+    <Compile Include="Querys\QueryFindContractFn21.cs" />
     <Compile Include="Querys\QueryДоговораАктЗаГод.cs" />
     <Compile Include="Querys\QueryДоговораБезАктовЗаГод.cs" />
     <Compile Include="Querys\QueryЗаполнитьЛимит.cs" />
@@ -952,6 +973,7 @@
     <Compile Include="Reports\ReportInformToYear.cs" />
     <Compile Include="Reports\ReportInformToYearM.cs" />
     <Compile Include="Reports\ReportRegistr.cs" />
+    <Compile Include="Reports\WordPrintLetter.cs" />
     <Compile Include="Reports\ОстатокЛимитовОтчет.cs" />
     <Compile Include="ReportVipNet\ExcelFileSave.cs" />
     <Compile Include="ReportVipNet\FiltrPerson.cs" />

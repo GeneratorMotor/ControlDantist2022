@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ControlDantist.Class
 {
-    interface IЛьготник
+    public interface IЛьготник
     {
         string Фамилия { get; set; }
         string Имя { get; set; }

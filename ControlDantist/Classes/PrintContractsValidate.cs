@@ -50,7 +50,6 @@ namespace ControlDantist.Classes
         }
 
 
-
         /// <summary>
         /// Номера договоров заключённые ранее
         /// </summary>
