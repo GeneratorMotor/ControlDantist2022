@@ -75,7 +75,7 @@ namespace ControlDantist.Reports
             table.Columns[8].Width = 150;
 
             table.Borders.Enable = 1; // Рамка - сплошная линия
-            table.Range.Font.Name = "Times New Roman";
+            table.Range.Font.Name = "PT Astra Serif";
             table.Range.Font.Size = 10;
 
             //запишем данные в таблицу

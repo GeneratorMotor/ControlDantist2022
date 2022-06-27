@@ -474,39 +474,67 @@ namespace ControlDantist
             // Фабрика проверки и конвертирования реестров.
             FactoryDateLetter factoryDateLetter = new FactoryDateLetter();
 
-            IValidateContract validContracts =  factoryDateLetter.ValidateContractRegistr(convertRegistr, factoryQuery, ConnectDB.ConnectionString());
-
-
-            // Тест подключ
-            //ValidContracts validContracts = new ValidContracts(convertRegistr, factoryQuery, ConnectDB.ConnectionString());
+            // Поиск ранее заключенных дооговоров.
+            IValidateContract<ValidContracts> validContracts =  factoryDateLetter.ValidateContractRegistr(convertRegistr, factoryQuery, ConnectDB.ConnectionString());
 
             // Получим данные по ранее заключенным договорам.
             IEnumerable<DataPerson> dataPeople = validContracts.Validate();
 
+            // Пока закоменнтируем.
             IFilterContract filterContract = new FiltrContract(dataPeople);
             IEnumerable<PrintContractsValidate> listDocum = filterContract.GetContracts();
 
-            // Список льготников.
-            //var listContract = convertRegistr.GetPersons();
-
-            // Проверим каждого льготника на наличие договоров.
+            // Оставим пока в закоментированном виде, вдруг решат что нужны дополнительные проверки.
+            //==================================
 
 
-            //var listContract = this.listProjectContrats.ToList();
+            //// Список для хранения данных для отчета.
+            //List<PrintContractsValidate> listPrint = new List<PrintContractsValidate>();
 
-            //string sTest = "";
+            //// Поместим в список информацию о ранее заключенных договорах
+            //// При проверке с датой дня рождения.
+            //listPrint.AddRange(listDocum.Where(w => w.FlagDateLetter == true));
 
-            ////// Получим список договоров из файла реестра для документа для отображения повторных договоров.
-            //ValidateContractPerson vclPrint = new ValidateContractPerson(this.listProjectContrats.ToList());
-            //List<PrintContractsValidate> listDoc = vclPrint.GetContract();
 
-            //// Если количество догооворов из файла реестра > 0.
-            //if (listDoc != null && listDoc.Count > 0)
+            //// Тест количество льготников не прошедших проверку по ранее заключенным договорам.
+            //var test = listPrint.Where(w => w.FlagDateLetter == true).ToList();
+
+            ////var count = test.Where(w => w.FlagDateLetter == false).Count();
+           
+            //// Получим оставшиеся письма по которым пока нет данных о ранее заключенных договорах.
+            //IConvertRegistr<ItemLibrary> remainLetter = factoryClass.CompareListContracts(this.listProjectContrats.ToList(), test);
+            //List<ItemLibrary> itemLibrariesNotLetter = remainLetter.GetPersons();
+
+            ////// Проверим существует ли список и заполнен ли он данными.
+            //if (itemLibrariesNotLetter.Count > 0)
             //{
-            //    //TODO: Снят запрет на печать реестра договоров
-            //    // Выведим список совподений договров на бумагу в Word.
-            //WordReport wordPrint = new WordReport(listDoc);
+                
+            //    IConvertRegistr<PersonContract> convertRegistrNdR = factoryClass.ConvertRegistrToPerson(itemLibrariesNotLetter.ToList());
+
+            //    // Поиск ранее заключенных договоров с льготниками которые не прошлти проверку по дню рождения.
+            //    IValidateContract<ValidContractNotDR> validateContractNdR = factoryDateLetter.ValidateContractRegistrNotDR(convertRegistrNdR, factoryQuery, ConnectDB.ConnectionString());
+
+            //    //IValidateContract<ValidContractNotDR> validateContractNR = validateContractNdR;
+
+            //    // Получим данные по ранее заключенным договорам.
+            //    //IEnumerable<DataPerson> dataPeopleNdR = validateContractNdR.Validate();
+            //    IEnumerable<DataPerson> dataPeopleNdR = validateContractNdR.Validate();
+
+            //    //// Проверим сформируем данные для письма.
+            //    IFilterContract filterContractNotDr = new FiltrContract(dataPeopleNdR);
+
+            //    IEnumerable<PrintContractsValidate> listDocumNotDr = filterContractNotDr.GetContracts();
+
+            //    listPrint.AddRange(listDocumNotDr);//.Where(w=>w.FlagDateLetter == true));
+
+            //}
+
+            //==============================================
+
+            //TODO: Снят запрет на печать реестра договоров
+            // Выведим список совподений договров на бумагу в Word.
             WordReport wordPrint = new WordReport(listDocum.ToList());
+            //WordReport wordPrint = new WordReport(listPrint);
 
             //// Выведим список проектов договоров на печать.
             DocPrint docPrint = new DocPrint(wordPrint);
@@ -795,6 +823,16 @@ namespace ControlDantist
             // Передадим в форму список проектов договоров.
             formInfoЛьготник.Contracts = this.listProjectContrats.ToList();
             formInfoЛьготник.Show();
+        }
+
+        private void btnCheck_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnLK_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

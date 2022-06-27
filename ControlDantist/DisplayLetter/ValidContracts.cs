@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ControlDantist.DisplayLetter
 {
-    public class ValidContracts : IValidateContract
+    public class ValidContracts : IValidateContract<ValidContracts>
     {
         private IConvertRegistr<PersonContract> convertRegistr;
         private ControlDantist.PatternSql.FactoryQuery factorySqlQuery;
@@ -25,7 +25,7 @@ namespace ControlDantist.DisplayLetter
             this.strConnection = strConnection;
         }
 
-        public IEnumerable<DataPerson> Validate()
+        public virtual IEnumerable<DataPerson> Validate()
         {
             var persons = this.convertRegistr.GetPersons();
 
@@ -33,8 +33,6 @@ namespace ControlDantist.DisplayLetter
             List<DataPerson> list = new List<DataPerson>();
 
             // Получим текущий год.
-
-
             foreach(var person in persons)
             {
                 DataPerson dataPerson = new DataPerson();
@@ -44,17 +42,13 @@ namespace ControlDantist.DisplayLetter
                 if (person.Отчество != null && person.Отчество.Trim().ToLower() != "".ToLower().Trim())
                 {
                     // Полкучим SQl запрос на поиск данных по текущему льготнику.
-                    IQuery query = this.factorySqlQuery.QueryFindContractFio(person.Фамилия, person.Имя, person.Отчество, Время.Дата(person.ДатаРождения.ToShortDateString()), person.NumContract, this.TodayDate());
-
-                    //var test1 = query.Query();
+                    IQuery query = this.factorySqlQuery.QueryFindContractFio(person.Фамилия, person.Имя, person.Отчество, Время.Дата(person.ДатаРождения.ToShortDateString()), person.NumContract, this.TodayDate(), Время.Дата(DateTimeZone(person.ДатаРождения).ToShortDateString()));
 
                     // Заполним данными о писбмах.
                     GetDate(query.Query(), this.strConnection, dataPerson);
 
                     // Полкучим SQl запрос на поиск данных по текущему льготнику.
                     IQuery query21 = this.factorySqlQuery.QueryFindContractFio21(person.Фамилия, person.Имя, person.Отчество, Время.Дата(person.ДатаРождения.ToShortDateString()), person.NumContract, this.TodayDate());
-
-//                    var test21 = query21.Query();
 
                     // Заполним данными о писбмах.
                     GetDate(query21.Query(), this.strConnection, dataPerson);
@@ -64,22 +58,17 @@ namespace ControlDantist.DisplayLetter
                     // Полкучим SQl запрос на поиск данных по текущему льготнику.
                     IQuery query = this.factorySqlQuery.QueryFindContractFi(person.Фамилия, person.Имя, Время.Дата(person.ДатаРождения.ToShortDateString()), person.NumContract, this.TodayDate());
 
-                    var test1 = query.Query();
-
                     // Заполним данными о писбмах.
                     GetDate(query.Query(), this.strConnection, dataPerson);
 
-                    // Полкучим SQl запрос на поиск данных по текущему льготнику.
+                       // Полкучим SQl запрос на поиск данных по текущему льготнику.
                     IQuery query21 = this.factorySqlQuery.QueryFindContractFi21(person.Фамилия, person.Имя, Время.Дата(person.ДатаРождения.ToShortDateString()), person.NumContract, this.TodayDate());
 
-                    var test21 = query21.Query();
-
-                    // Заполним данными о писбмах.
+                   // Заполним данными о писбмах.
                     GetDate(query21.Query(), this.strConnection, dataPerson);
                 }
 
                 // То же самое сделаем и с 2020 годом.
-
                 list.Add(dataPerson);
             }
 
@@ -87,7 +76,7 @@ namespace ControlDantist.DisplayLetter
         }
 
 
-        private void GetDate(string query,string strConnection, DataPerson dataPerson)
+        public void GetDate(string query,string strConnection, DataPerson dataPerson)
         {
             // Получим ранее заключенные договора.
             IGetDataTableSQL tableSQL = new TableBD(query, "TabPerson", this.strConnection);
@@ -98,13 +87,30 @@ namespace ControlDantist.DisplayLetter
             convertData.ConvertDate(table);
         }
 
-        private int TodayDate()
+        private DateTime DateTimeZone(DateTime dtBerst)
+        {
+            //var dtTest = "";
+
+            //// Преобразует в местное время.
+            //var test = dtBerst.ToLocalTime();
+
+            //var test2 = dtBerst.ToOADate();
+
+            return dtBerst.ToUniversalTime();
+
+            //var test3 = dtBerst.Ticks;
+
+
+        }
+
+        public int TodayDate()
         {
             // Получим текущий год.
             int currentYear = DateTime.Now.Year;
 
             // Получим год окончания проверки.
-            return currentYear - 2;
+            //return currentYear - 2;
+            return currentYear - 4;
         }
     }
 }

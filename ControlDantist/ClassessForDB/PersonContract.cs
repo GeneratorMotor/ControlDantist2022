@@ -16,5 +16,7 @@ namespace ControlDantist.ClassessForDB
         public string Отчество { get ; set ; }
         public DateTime ДатаРождения { get ; set ; }
         public string NumContract { get; set ; }
+
+        public bool FlagFoundLetter { get; set; }
     }
 }

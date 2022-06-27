@@ -396,6 +396,11 @@
     <Compile Include="Classes\ЭСРНvalidate.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ClassUpdateFind\CancelContract.cs" />
+    <Compile Include="ClassUpdateFind\DeleteAct.cs" />
+    <Compile Include="ClassUpdateFind\FactoryContract.cs" />
+    <Compile Include="ClassUpdateFind\SqlSetFalseValidate.cs" />
+    <Compile Include="ClassUpdateFind\SqlSetTrueValidate.cs" />
     <Compile Include="ClassValidRegions\EsrnValid.cs" />
     <Compile Include="ClassValidRegions\FillPerson.cs" />
     <Compile Include="ClassValidRegions\Person.cs" />
@@ -404,6 +409,7 @@
     <Compile Include="ClassValidRegions\WriteSity.cs" />
     <Compile Include="ConvertDataTableToList\GetPersonRegistr.cs" />
     <Compile Include="ConvertDataTableToList\IConvertRegistr.cs" />
+    <Compile Include="ConvertDataTableToList\PersonRegistrRemains.cs" />
     <Compile Include="DataBaseContext\DContext.cs" />
     <Compile Include="DataBaseContext\IDatarepository.cs" />
     <Compile Include="DataBaseContext\IFind.cs" />
@@ -467,7 +473,9 @@
     <Compile Include="DisplayLetter\FiltrContract.cs" />
     <Compile Include="DisplayLetter\IFilterContract.cs" />
     <Compile Include="DisplayLetter\IValidateContract.cs" />
+    <Compile Include="DisplayLetter\ValidContractNotDR.cs" />
     <Compile Include="DisplayLetter\ValidContracts.cs" />
+    <Compile Include="DisplayLetter\ValidContractsNotDateOfBerts.cs" />
     <Compile Include="DisplayRegistr\DisplayPerson.cs" />
     <Compile Include="DisplayRegistr\DisplayRegistrProject.cs" />
     <Compile Include="DisplayRegistr\ResultValidEsrnDisplay.cs" />
@@ -910,6 +918,10 @@
     <Compile Include="Querys\QueryFindContractFio21.cs" />
     <Compile Include="Querys\QueryFindContractFn.cs" />
     <Compile Include="Querys\QueryFindContractFn21.cs" />
+    <Compile Include="Querys\QueryFindFiNotDr.cs" />
+    <Compile Include="Querys\QueryFindFiNotDr21.cs" />
+    <Compile Include="Querys\QueryFindFioNotDr.cs" />
+    <Compile Include="Querys\QueryFindFioNotDr21.cs" />
     <Compile Include="Querys\QueryДоговораАктЗаГод.cs" />
     <Compile Include="Querys\QueryДоговораБезАктовЗаГод.cs" />
     <Compile Include="Querys\QueryЗаполнитьЛимит.cs" />

@@ -33,7 +33,7 @@ namespace ControlDantist.Reports
 
             // Сформируем стиль для ячеек.
             WorksheetStyle style2 = book.Styles.Add("HeaderStyle2");
-            style2.Font.FontName = "Times New Roman";
+            style2.Font.FontName = "PT Astra Serif";
             style2.Font.Size = 8;
             style2.Font.Bold = true;
             style2.Alignment.Horizontal = StyleHorizontalAlignment.Center;
@@ -50,7 +50,7 @@ namespace ControlDantist.Reports
             // Стиль для ячеек с центрированием по левому краю.
             // Сформируем стиль для ячеек.
             WorksheetStyle styleLeft = book.Styles.Add("StyleAlignmentLeft");
-            styleLeft.Font.FontName = "Times New Roman";
+            styleLeft.Font.FontName = "PT Astra Serif";
             styleLeft.Font.Size = 8;
             styleLeft.Font.Bold = true;
             styleLeft.Alignment.Horizontal = StyleHorizontalAlignment.Left;
@@ -64,7 +64,7 @@ namespace ControlDantist.Reports
             styleLeft.Alignment.WrapText = true;
 
              WorksheetStyle style3 = book.Styles.Add("HeaderStyle3");
-            style3.Font.FontName = "Times New Roman";
+            style3.Font.FontName = "PT Astra Serif";
             style3.Font.Size = 8;
             style3.Font.Bold = true;
             style3.Alignment.Horizontal = StyleHorizontalAlignment.Center;

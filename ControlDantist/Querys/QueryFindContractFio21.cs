@@ -36,7 +36,7 @@ namespace ControlDantist.Querys
 
         public string Query()
         {
-            string query =  @" declare @FistName nvarchar(100)
+            string query = @" declare @FistName nvarchar(100)
                             declare @Name nvarchar(100)
                             declare @Surname nvarchar(100)
                             declare @NumContract nvarchar(50)
@@ -56,12 +56,17 @@ namespace ControlDantist.Querys
                             where((
 							LOWER(RTRIM(LTRIM([Фамилия]))) = LOWER(LTRIM(RTRIM(@FistName))) and LOWER(LTRIM(RTRIM(Имя))) = LOWER(LTRIM(RTRIM(@Name)))
 							and  LOWER(LTRIM(RTRIM(Отчество))) = LOWER(LTRIM(RTRIM(@Surname)))
-							and (ЛьготникАрхив.ДатаРождения =  @DR)
-							and ((YEAR(ДатаАктаВыполненныхРабот) >= "+ this.year +" and flagАнулирован = 0 and ФлагНаличияАкта = 1) " +
-                            @"or (YEAR(ДатаАктаВыполненныхРабот)= 1900 and flagАнулирован = 1) or (YEAR(ДатаАктаВыполненныхРабот)= 1900 and flagАнулирован = 0 and ФлагПроверки = 1)
-							)))  ";
-            //) and LOWER(RTRIM(LTRIM(Договор.НомерДоговора)))) ";//  <> LOWER(RTRIM(LTRIM(@NumContract)))) ";
-
+							and (ЛьготникАрхив.ДатаРождения =  @DR) and YEAR(ДатаАктаВыполненныхРабот) >= " + this.year + "))  " +
+                            @" union
+                            select Фамилия, Имя, Отчество, ДоговорАрхив.НомерДоговора,ЛьготникАрхив.ДатаРождения,ДатаДоговора,[НомерАкта],
+                            ДатаАктаВыполненныхРабот,
+                            ДоговорАрхив.flagАнулирован,ДоговорАрхив.ФлагАнулирован, ФлагПроверки,ФлагНаличияАкта from ЛьготникАрхив
+                            inner join ДоговорАрхив
+                            on ЛьготникАрхив.id_льготник = ДоговорАрхив.id_льготник
+                            left outer join АктВыполненныхРаботАрхив
+                            on ДоговорАрхив.id_договор = АктВыполненныхРаботАрхив.id_договор
+                            where ДоговорАрхив.НомерДоговора =  @NumContract ";
+                          
             return query;
         }
     }

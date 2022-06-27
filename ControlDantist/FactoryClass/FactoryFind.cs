@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ControlDantist.ClassessForDB;
 using ControlDantist.ConvertDataTableToList;
 using ControlDantist.DataBaseContext;
+using ControlDantist.Classes;
 
 namespace ControlDantist.FactoryClass
 {
@@ -19,6 +20,17 @@ namespace ControlDantist.FactoryClass
         public IConvertRegistr<PersonContract> ConvertRegistrToPerson(List<ItemLibrary> listRegistr)
         {
             return new GetPersonRegistr(listRegistr);
+        }
+
+        /// <summary>
+        /// Сравнивает два списка контрактов и помечают найденные флагом ранее найденных договоров.
+        /// </summary>
+        /// <param name="listRegistr">Список договоров.</param>
+        /// <param name="contracts">Список льготников с ранее найденными заключенными договорами.</param>
+        /// <returns></returns>
+        public IConvertRegistr<ItemLibrary> CompareListContracts(List<ItemLibrary> listRegistr, IEnumerable<PrintContractsValidate> listDocum)
+        {
+            return new PersonRegistrRemains(listRegistr, listDocum);
         }
     }
 }

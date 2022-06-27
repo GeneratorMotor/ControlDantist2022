@@ -37,8 +37,10 @@ namespace ControlDantist.ConvertDataTableToList
                 person.Имя = it.Packecge.льготник.Имя.Trim();
                 person.Отчество = it.Packecge.льготник.Отчество.Trim();
                 person.ДатаРождения = it.Packecge.льготник.ДатаРождения;
+
                 // Запишем данные по договору.
                 person.NumContract = it.NumContract;
+
 
                 //person.Фамилия = "Шапкина".Trim();
                 //person.Имя = "Татьяна".Trim();

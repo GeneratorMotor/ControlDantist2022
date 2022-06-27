@@ -13,6 +13,7 @@ using ControlDantist.FindPersons;
 using ControlDantist.ValidPersonContract;
 using ControlDantist.FindPersonFullTrue;
 using DantistLibrary;
+using ControlDantist.ClassUpdateFind;
 
 namespace ControlDantist
 {
@@ -22,9 +23,14 @@ namespace ControlDantist
         //private delegate List<T> AsyncDelegateLoad(IEnumerable<T> queryCollection)
         //    where T : class
 
+        // Фабрика SQL скриптов.
+        private FactoryContract factoryContract;
+
         public FormFIndVAlidTrueCOntracts()
         {
             InitializeComponent();
+
+            factoryContract = new FactoryContract();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -268,55 +274,57 @@ namespace ControlDantist
 
         private void установитьКакПрошедшийПроверкуToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // id договора.
             int id_договор = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["id_договор"].Value);
 
-            string sTest = "update dbo.Договор " +
-                           "set ДатаЗаписиДоговора = '" + DateTime.Today.ToShortDateString() + "' " +
-                           ",ФлагПроверки = 'True' " +
-                           ",logWrite = '" + MyAplicationIdentity.GetUses() + "' " +
-                           ", ФлагВозвратНаДоработку = 0 " +
-                           ", flagАнулирован = 0" +
-                           ", ФлагАнулирован = 0 " +
-                           ", flag2020 = 0 " +
-                           ", flag2019AddWrite = 0 " +
-                           "where id_договор = " + id_договор + " ";
+            // Переменная для хранения имени пользователя.
+            string user = string.Empty;
 
-            Classes.ExecuteQuery.Execute(sTest);
-            this.Close();
+            try
+            {
+                // Получим пользователя из домена.
+                user = MyAplicationIdentity.GetUses();
+            }
+            catch(Exception ex)
+            {
+                // Вывдаим предупреждение пользователю.
+                MessageBox.Show("Ошибка при определении пользователя в домене изменения внесуться без данных о пользователе - " + ex.Message);
+
+                user = "";
+            }
+
+            // Предложим пользователю внеение изменений.
+            DialogResult dialogResult = MessageBox.Show("Установить договор как прошедший проверку?", "Внимание", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+            if (dialogResult == DialogResult.OK)
+            {
+                // Запрос на установку договора как прошедшего проверку.
+                IQuery query = factoryContract.SetTrueContract(user, DateTime.Today.ToShortDateString(), id_договор);
+                Classes.ExecuteQuery.Execute(query.Query());
+
+                this.Close();
+            }
+            else
+            {
+                return;
+            }
         }
 
         private void отмениитьАктToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bool flagAct = false;
+
             // Получим текущий договор.
             int idДоговор = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["id_договор"].Value);
 
+            // Получим id акта выполненных работ.
             int idYear = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["Год"].Value);
 
             if(idYear == 2021)
             {
-                //// Получим есть ли у текущего договора акт выполненных работ.
-                //IQuery query = new QueryCountActs(idДоговор);
+               bool flagExistAct = false;
 
-                //DataTable tabActs = ТаблицаБД.GetTableSQL(query.Query(), "КоличествоАктов");
-
-                //if(tabActs != null && tabActs.Rows != null && tabActs.Rows.Count > 0)
-                //{
-                //    // Получим номер акта выполненных работ.
-                //    string numAct = " № акта - " + tabActs.Rows[0]["НомерАкта"].ToString();
-
-                //    // Получим дату акта выполненных работ.
-                //    string dateAct = " Дата - " + Convert.ToDateTime(tabActs.Rows[0]["ДатаАктаВыполненныхРабот"]).ToShortDateString();
-
-                //    // Построим текстовое пердставление содержимого запроса к таблице актов.
-                //    StringBuilder build = new StringBuilder();
-
-                //    build.Append(numAct);
-                //    build.Append(dateAct);
-
-                bool flagExistAct = false;
-
-                // Получим 
+                // Проверим есть ли у договора акт выпоненных работ.
                 string strDateAct = ExistsAct.Exists(idДоговор, idYear, ref flagExistAct);
 
                 if (flagExistAct == true)
@@ -338,10 +346,15 @@ namespace ControlDantist
                             catch (Exception ex)
                             {
                                 MessageBox.Show("Ошибка получения имени пользователя из домена");
+
+                                user = "";
                             }
 
+                            // Текущая дата.
+                            string dateToday = DateTime.Now.Date.ToShortDateString();
+
                             // Запросм нра удаление акта выполненных работ.
-                            IQuery queryDelete = new QueryDeleteAct(user, idДоговор);
+                            IQuery queryDelete = factoryContract.SetdeleteAct(user, dateToday, idДоговор);
 
                             // Удаление акта выполненных работ.
                             ExecuteQuery.Execute(queryDelete.Query());
@@ -389,184 +402,7 @@ namespace ControlDantist
             }
 
 
-            //bool flagWrite2019 = false;
 
-            //flagWrite2019 = Convert.ToBoolean(this.dataGridView1.CurrentRow.Cells["flag2019AddWrite"].Value);
-
-            //string queryValidAct = string.Empty;
-
-            //if (flagWrite2019 == false)
-            //{
-            //    queryValidAct = "select COUNT(id_акт) as 'КоличествоАктов' from АктВыполненныхРабот " +
-            //                       "where id_договор in ( " +
-            //                        "select id_договор  from Договор " +
-            //                        "where id_договор = " + idДоговор + " ) ";
-            //}
-            //else
-            //{
-            //    queryValidAct = @"select  COUNT(id_акт) as 'КоличествоАктов' from АктВыполненныхРаботAdd 
-            //                            inner join ДоговорAdd
-            //                            on АктВыполненныхРаботAdd.id_договор = ДоговорAdd.id_ТабДоговор
-            //                             where ДоговорAdd.id_договор = " + idДоговор + " ";
-
-
-            //    //queryValidAct = "select COUNT(id_акт) as 'КоличествоАктов' from АктВыполненныхРаботAdd " +
-            //    //                       "where id_договор in ( " +
-            //    //                        "select id_договор  from ДоговорAdd " +
-            //    //                        "where id_договор = " + idДоговор + " ) ";
-            //}
-
-            //DataTable tabAct = ТаблицаБД.GetTableSQL(queryValidAct, "ТаблицаАкт");
-
-            //StringBuilder build = new StringBuilder();
-
-            //if (Convert.ToInt32(tabAct.Rows[0]["КоличествоАктов"]) > 0)
-            //{
-            //    flagAct = true;
-
-            //    string queryValidNumAct = string.Empty;
-
-            //    if (flagWrite2019 == false)
-            //    {
-            //        //queryValidNumAct = "select НомерАкта,ДатаПодписания from АктВыполненныхРабот " +
-            //        //                      "where id_договор in ( " +
-            //        //                      "select id_договор  from Договор " +
-            //        //                      "where id_договор = " + idДоговор + " ) ";
-
-            //        queryValidNumAct = @"select НомерАкта,ДатаПодписания,СуммаАктаВыполненныхРабот from АктВыполненныхРабот 
-            //                            inner join Договор
-            //                            on АктВыполненныхРабот.id_договор = Договор.id_договор
-            //                             where ДоговорAdd.id_договор = " + idДоговор + " ";
-            //    }
-            //    else
-            //    {
-            //        //queryValidNumAct = "select НомерАкта,ДатаПодписания from АктВыполненныхРаботAdd " +
-            //        //                      "where id_договор in ( " +
-            //        //                      "select id_договор  from ДоговорAdd " +
-            //        //                      "where id_договор = " + idДоговор + " ) ";
-
-            //        queryValidNumAct = @"select НомерАкта,ДатаПодписания,СуммаАктаВыполненныхРабот from АктВыполненныхРаботAdd 
-            //                            inner join ДоговорAdd
-            //                            on АктВыполненныхРаботAdd.id_договор = ДоговорAdd.id_ТабДоговор
-            //                             where ДоговорAdd.id_договор = " + idДоговор + " ";
-            //    }
-
-            //    DataTable tabNumAct = ТаблицаБД.GetTableSQL(queryValidNumAct, "ТаблицаАктНомер");
-
-            //    // Запишем номер акта
-            //    build.Append("Номер акта - " + tabNumAct.Rows[0]["НомерАкта"].ToString().Trim());
-            //    build.Append(" от " + Convert.ToDateTime(tabNumAct.Rows[0]["ДатаПодписания"]).ToShortDateString());
-
-            //    // Проверим есть ли акт.
-            //    // Так как мы заливали 2019 год без таблицы акт то проверям по наличию суммы акта в таблице договор
-            //    if (Convert.ToDecimal(tabNumAct.Rows[0]["СуммаАктаВыполненныхРабот"]) != 0.0m)
-            //    {
-            //        flagAct = true;
-            //    }
-            //    else
-            //    {
-            //        flagAct = false;
-            //    }
-            //}
-
-            ////// Выведим диалоговое окно.
-            ////FormMessageAct formMessAct = new FormMessageAct();
-            ////formMessAct.НомерАкта = build.ToString();
-            ////formMessAct.ShowDialog();
-            //DialogResult dialogResult = MessageBox.Show("Удалить акт выполненных работ " + build.ToString().Trim(), "Внимание", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-
-            //string test = "test";
-
-            //if (dialogResult == System.Windows.Forms.DialogResult.OK)
-            //{
-
-            //    string query = string.Empty;
-
-            //    string user = MyAplicationIdentity.GetUses();
-
-            //    if (flagWrite2019 == false)
-            //    {
-            //        query = " declare @id int " +
-            //                "set @id = " + idДоговор + " " +
-            //                "delete АктВыполненныхРабот " +
-            //                "where id_договор in ( " +
-            //                "select id_договор  from Договор " +
-            //                "where id_договор = @id " +
-            //                ") " +
-            //                "update Договор " +
-            //                "set ФлагПроверки = 'True', " +
-            //                "ДатаАктаВыполненныхРабот = '19000101', " +
-            //                "СуммаАктаВыполненныхРабот = 0.0, " +
-            //                "НомерРеестра =  null, " +
-            //                "ДатаРеестра = null, " +
-            //                "НомерСчётФактрура = null, " +
-            //                "ДатаСчётФактура = null, " +
-            //                "logWrite = '" + user + "',  " +
-            //                " ФлагВозвратНаДоработку = 1 " +
-            //                "where id_договор in ( " +
-            //                "select id_договор  from Договор " +
-            //                "where id_договор = @id) ";
-            //    }
-            //    else
-            //    {
-            //        query = "declare @id int " +
-            //                   "set @id = " + idДоговор + " " +
-            //                   @" delete Act
-            //                    from АктВыполненныхРаботAdd as Act
-            //                    inner join ДоговорAdd
-            //                    on ДоговорAdd.id_договор = Act.id_договор
-            //                    where ДоговорAdd.id_договор = @id
-            //                    delete Act2
-            //                    from АктВыполненныхРабот as Act2
-            //                    inner join ДоговорAdd
-            //                    on ДоговорAdd.id_ТабДоговор = Act2.id_договор
-            //                    where ДоговорAdd.id_договор = @id " +
-            //                   "update ДоговорAdd " +
-            //                   "set ФлагПроверки = 'True', " +
-            //                   " ФлагНаличияАкта = 1 " +
-            //                   "ДатаАктаВыполненныхРабот = '19000101', " +
-            //                   "СуммаАктаВыполненныхРабот = 0.0, " +
-            //                   "НомерРеестра =  null, " +
-            //                   "ДатаРеестра = null, " +
-            //                   "НомерСчётФактрура = null, " +
-            //                   "ДатаСчётФактура = null, " +
-            //                   "logWrite = '" + user + "',  " +
-            //                    " ФлагВозвратНаДоработку = 1 " +
-            //                   "where id_договор in ( " +
-            //                   "select id_договор  from ДоговорAdd " +
-            //                   "where id_договор = @id) ";
-            //    }
-
-            //    // Выполним запрос.
-            //    using (SqlConnection con = new SqlConnection(ConnectDB.ConnectionString()))
-            //    {
-            //        SqlTransaction transact = con.BeginTransaction();
-            //        con.Open();
-
-            //        Classes.ExecuteQuery.Execute(query, con, transact);
-            //    }
-
-            //    // Временно переведем в режимокрытия прошедших проверку.
-            //    //this.FlagValid = true;
-
-            //    // Временно введем текст, что бы отработали условия отображения льготников при поиске.
-            //    this.textBox2.Text = "Обновление";
-
-            //    List<ValideContract> listDisplay = new List<ValideContract>();
-
-            //    // Очистим DataGridView от записеий.
-            //    LoadDate(listDisplay);
-
-            //    // Обновим DataGrid.
-            //    //LoadAfterClickFind();
-
-            //    // Очистим поле ввода Фамилии.
-            //    this.textBox2.Text = string.Empty;
-
-            //    // 
-            //    //this.FlagValid = false;
-
-            //}
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -620,13 +456,13 @@ namespace ControlDantist
                             MessageBox.Show("Ну удалось получит имя пользователя в домене - " + ex.Message.Trim());
                         }
 
-                        // SQL запрос на удаление акта выполненных работ.
-                        IQuery queryDelete = new QueryИзменитьСтатусДоговора(idДоговор, user);
+                        string dateToday = DateTime.Now.Date.ToShortDateString();
 
-                        string strQueryDelete = queryDelete.Query();
+
+                        IQuery querySetFalseValidate = factoryContract.SetFalsetContract(user, dateToday, idДоговор);
 
                         // Выполним скрипт.
-                        ExecuteQuery.Execute(strQueryDelete);
+                        ExecuteQuery.Execute(querySetFalseValidate.Query());
 
                         // Обновим содержимое DataGridView.
                         // Обновим DataGridView.
@@ -702,13 +538,14 @@ namespace ControlDantist
                         MessageBox.Show("Ну удалось получит имя пользователя в домене - " + ex.Message.Trim());
                     }
 
-                    // SQL запрос изменить статуст договора (паттер стратегия.)
-                    IQuery queryАнулировать = new QueryИзменитьСтатусДоговора(idДоговор, user);
+                    // Текущая дата.
+                    string dateTody = DateTime.Now.Date.ToShortDateString();
 
-                    string strQueryDelete = queryАнулировать.Query();
+                    // Класс инкапсулирующий SQL запрос на анулирование договора.
+                    IQuery queryCancelContract = factoryContract.SetCancelContract(user, dateTody, idДоговор);
 
                     // Выполним скрипт.
-                    ExecuteQuery.Execute(strQueryDelete);
+                    ExecuteQuery.Execute(queryCancelContract.Query());
 
                     // Обновим содержимое DataGridView.
                     // Обновим DataGridView.

@@ -105,6 +105,7 @@
             this.btnCheck.TabIndex = 2;
             this.btnCheck.Text = "Направлен запрос";
             this.btnCheck.UseVisualStyleBackColor = true;
+            this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
             // 
             // button3
             // 
@@ -216,6 +217,7 @@
             this.btnLK.TabIndex = 33;
             this.btnLK.Text = "Статистика";
             this.btnLK.UseVisualStyleBackColor = true;
+            this.btnLK.Click += new System.EventHandler(this.btnLK_Click);
             // 
             // groupBox1
             // 

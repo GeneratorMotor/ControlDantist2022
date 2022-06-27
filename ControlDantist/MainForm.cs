@@ -40,6 +40,7 @@ using ControlDantist.Querys;
 using ControlDantist.ReportCountYear;
 using ControlDantist.ReportFill;
 using ControlDantist.FactorySqlQuery;
+using System.Configuration;
 
 
 
@@ -90,6 +91,12 @@ namespace ControlDantist
         public MainForm()
         {
             InitializeComponent();
+
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            // Прочитаем кто пользователь системы.
+
+
         }
 
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1679,6 +1686,49 @@ namespace ControlDantist
             }
             fs.Close();
 
+            string user = string.Empty;
+
+            try
+            {
+                // Получим пользователя 
+                user = MyAplicationIdentity.GetUses();
+
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+                if(config.AppSettings.Settings["SetUser"] == null)
+                {
+                    config.AppSettings.Settings["Исполнитель"].Value = this.Fio(user);
+                    config.Save();
+
+                    Configuration config2 = ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
+                    config2.AppSettings.Settings.Add("SetUser", "True");
+                    config2.Save(ConfigurationSaveMode.Minimal);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ну удалось получит имя пользователя в домене - введите имя в config.exe в ручную");
+            }
+
+        }
+
+        private string Fio(string fio)
+        {
+            string[] stringFio = fio.Split(' ');
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(stringFio[0]);
+            stringBuilder.Append(" ");
+            stringBuilder.Append(stringFio[1].Take(1).First().ToString() + ".");
+
+            stringBuilder.Append(" ");
+            if (stringFio.Length > 2)
+            {
+                stringBuilder.Append(stringFio[2].Take(1).First().ToString() + ".");
+            }
+
+            return stringBuilder.ToString().Trim();
         }
 
         private void договораПрошедшиеПроверкуToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3042,7 +3092,7 @@ namespace ControlDantist
             table.Columns[5].Width = 80;
             table.Columns[6].Width = 80;
             table.Borders.Enable = 1; // Рамка - сплошная линия
-            table.Range.Font.Name = "Times New Roman";
+            table.Range.Font.Name = "PT Astra Serif";
             table.Range.Font.Size = 10;
             //счётчик строк
             //int i = 1;

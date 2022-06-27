@@ -26,6 +26,17 @@ namespace ControlDantist.Classes
         /// <returns></returns>
         public static DateTime LocalDate(DateTime date)
         {
+
+            //var testDate = date;
+            ////var unspecified = new DateTime(2016, 12, 12, 10, 10, 10, DateTimeKind.Unspecified);
+            ////var specified = DateTime.SpecifyKind(unspecified, DateTimeKind.Utc);
+
+            //var dateTest = DateTimeOffset.Parse(date.ToShortDateString()); 
+
+            //string iTest = "";
+
+            //var testDate2 = date.Date.ToLocalTime();
+
             return date.ToLocalTime().Date;
         }
 

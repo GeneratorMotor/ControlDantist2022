@@ -46,9 +46,12 @@ namespace ControlDantist.ClassessForDB
                     dpc.ФлагНаличияАкта = Convert.ToBoolean(row["ФлагНаличияАкта"]);
                     listContracts.Add(dpc);
                 }
+
+                this.dataPerson.FlagDatatLetter = true;
             }
 
-            this.dataPerson.DataContracts = listContracts;
+            this.dataPerson.DataContracts.AddRange(listContracts);
+            //this.dataPerson.DataContracts = listContracts;
         }
     }
 }

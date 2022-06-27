@@ -10,14 +10,19 @@ using ControlDantist.Classes;
 using ControlDantist.Find;
 using ControlDantist.Querys;
 using DantistLibrary;
+using ControlDantist.ClassUpdateFind;
 
 namespace ControlDantist
 {
     public partial class FormFindValidFalseContract : Form
     {
+        private FactoryContract factoryContract;
+
         public FormFindValidFalseContract()
         {
             InitializeComponent();
+
+            factoryContract = new FactoryContract();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -120,7 +125,7 @@ namespace ControlDantist
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Получим id договора.
+             // Получим id договора.
             int idДоговор = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["id_договор"].Value);
 
             // Получим год когда заключен договор.
@@ -185,10 +190,46 @@ namespace ControlDantist
         private void анулироватьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //// Получим id договора.
-            //int idДоговор = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["id_договор"].Value);
+            int idДоговор = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["id_договор"].Value);
 
-            //// Получим год когда заключен договор.
-            //int idYear = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["Год"].Value);
+            // Получим год когда заключен договор.
+            int idYear = Convert.ToInt32(this.dataGridView1.CurrentRow.Cells["Год"].Value);
+
+            // Переменная для хранения имени пользователя полученного из домена.
+            string user = string.Empty;
+
+            try
+            {
+                // Получим пользователя 
+                user = MyAplicationIdentity.GetUses();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ну удалось получит имя пользователя в домене - " + ex.Message.Trim());
+            }
+
+            // Получим текущую дату.
+            string dateToday = DateTime.Now.Date.ToShortDateString();
+
+            DialogResult dialogResult = MessageBox.Show("Анулировать договор?", "Внимание", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+            if(dialogResult == DialogResult.OK)
+            {
+                IQuery queryCancelContract = factoryContract.SetCancelContract(user, dateToday, idДоговор);
+                
+                // Выполним скрипт.
+                ExecuteQuery.Execute(queryCancelContract.Query());
+
+                // Обновим страницу.
+                FindByContract fbc = new FindByContract(this.textBox1.Text, false);
+                this.LoadDate(fbc.GetNumber());
+
+            }
+            else
+            {
+                return;
+            }
+
 
             //if (idYear == 2021)
             //{

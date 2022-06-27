@@ -19,6 +19,11 @@ namespace ControlDantist.Classes
         /// </summary>
         public string СписокДоговоров { get; set; }
 
+        /// <summary>
+        /// Флаг указывает что льготника есть ранее заключенные договора.
+        /// </summary>
+        public bool FlagDateLetter { get; set; }
+
         public List<ValidItemsContract> listContracts { get; set; }// = new List<ValidItemsContract>();
 
         //Хранит ФИО и номер текущегно договора

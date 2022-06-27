@@ -69,7 +69,7 @@ namespace ControlDantist.Letter
             table.Columns[2].Width = 140;
             table.Columns[3].Width = 300;
             table.Borders.Enable = 1; // Рамка - сплошная линия
-            table.Range.Font.Name = "Times New Roman";
+            table.Range.Font.Name = "PT Astra Serif";// "Times New Roman";
             table.Range.Font.Size = 10;
             //счётчик строк
             int i = 1;

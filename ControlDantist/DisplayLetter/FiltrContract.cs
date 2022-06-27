@@ -22,6 +22,9 @@ namespace ControlDantist.DisplayLetter
 
         public IEnumerable<PrintContractsValidate> GetContracts()
         {
+            // TODO: Удалить потом.
+           // var test4 = "";
+           
             foreach (var person in this.dataPeople)
             {
                 PrintContractsValidate item = new PrintContractsValidate();
@@ -40,14 +43,11 @@ namespace ControlDantist.DisplayLetter
                 // Номер текущего договора.
                 item.НомерТекущийДоговор = person.PC.NumContract.ToString();
 
-                if(item.НомерТекущийДоговор.Trim().ToLower() == "СпКмрСо/3942".ToLower().Trim())
-                {
-                    var asd2 = "";
-                }
+                // Уажем есть ли ранее заключенные договра у льготника.
+                item.FlagDateLetter = person.FlagDatatLetter;
 
-                var asd = person.DataContracts.Where(w => w.NumContract.ToLower().Trim() == "СпКмрСо/3942".ToLower().Trim()).FirstOrDefault();
-                    // Строка для хранения номеров договоров.
-                    StringBuilder builderContracts = new StringBuilder();
+                // Строка для хранения номеров договоров.
+                StringBuilder builderContracts = new StringBuilder();
 
                 // Посмотрим есть ли у данного льготника аннулированные договора.
                 var itemAnnulirovan = person.DataContracts.Where(w => w.ФлагАнулирован == true).ToList();
@@ -67,6 +67,8 @@ namespace ControlDantist.DisplayLetter
                         builderContracts.Append(" " +itmA.NumContract.Trim() + "  " + itmA.DateContract.Trim() + " - анулирован  \n");
 
                         itmA.FlagAnulirovan = true;
+
+                        person.FlagValidate = true;
                     }
 
                     // Найдем номер договора с у которого ФлагНаличиаАкта = true.
@@ -79,12 +81,14 @@ namespace ControlDantist.DisplayLetter
                         {
                             itmContract.FlagAnulirovan = true;
                         }
+
+                        person.FlagValidate = true;
                     }
 
                 }
 
                 // Проверим есть договра с актоми выполненных работ.
-                var itemAct = person.DataContracts.Where(w => w.ФлагНаличияАкта == true && w.NumContract.Trim().ToLower() != item.НомерТекущийДоговор.Trim().ToLower()).ToList();
+                var itemAct = person.DataContracts.Where(w => w.ФлагНаличияАкта == true).ToList();// && w.NumContract.Trim().ToLower() != item.НомерТекущийДоговор.Trim().ToLower()).ToList();
 
                 // Если есть ли оплаченные договора.
                 if (itemAct.Count > 0)
@@ -99,7 +103,10 @@ namespace ControlDantist.DisplayLetter
                             itmAct.DateContract = "".Trim();
                       }
 
-                        builderContracts.Append(" " + itmAct.NumContract +" от "+itmAct.DateContract.Trim() +"  Акт - " + itmAct.NumAct.Trim() + " от " + itmAct.DateAct.Trim() + " \n");
+                        //builderContracts.Append(" " + itmAct.NumContract +" от "+itmAct.DateContract.Trim() +"  Акт - " + itmAct.NumAct.Trim() + " от " + itmAct.DateAct.Trim() + " \n");
+                        builderContracts.Append(" " + itmAct.NumContract + " - (Акт - " + itmAct.DateAct.Trim() + ") \n");
+
+                        person.FlagValidate = true;
                     }
 
                     // Найдем номер договора с у которого ФлагНаличиаАкта = true.
@@ -112,19 +119,32 @@ namespace ControlDantist.DisplayLetter
                         {
                             itmContract.ФлагНаличияАкта = true;
                         }
+
+                        person.FlagValidate = true;
                     }
 
                 }
 
                 // Проверим оставшиеся договора.
-                var projectContracts = person.DataContracts.Where(w => w.FlagAnulirovan == false && w.ФлагНаличияАкта == false && w.NumContract.Trim().ToLower() != item.НомерТекущийДоговор.Trim().ToLower()).ToList();
+                //var projectContracts = person.DataContracts.Where(w => w.FlagAnulirovan == false && w.ФлагНаличияАкта == false && w.NumContract.Trim().ToLower() != item.НомерТекущийДоговор.Trim().ToLower()).ToList();
+                var projectContracts = person.DataContracts.Where(w => w.FlagAnulirovan == false && w.ФлагНаличияАкта == false).ToList();// && w.NumContract.Trim().ToLower() != item.НомерТекущийДоговор.Trim().ToLower()).ToList();
 
-                if(projectContracts.Count > 0)
+                if (projectContracts.Count > 0)
                 {
-                    foreach(var itmContr in projectContracts)
-                    {
-                        builderContracts.Append(itmContr.NumContract + " - проект ");
-                    }
+
+                    // Сгруппируем.
+                    var groupProjectContract = projectContracts.GroupBy(w => w.NumContract);
+
+                    //foreach(var itmContr in projectContracts)
+                        foreach (var itmContrTake in groupProjectContract.Take(1))
+                        {
+                            foreach (var itmContr in itmContrTake)
+                            {
+                                builderContracts.Append(itmContr.NumContract + " - проект \n");
+
+                            person.FlagValidate = true;
+                            }
+                        }
                 }
 
                 item.СписокДоговоров = builderContracts.ToString();

@@ -52,5 +52,10 @@ namespace ControlDantist.DataBaseContext
         /// </summary>
         public string DatePassword { get; set; }
 
+        /// <summary>
+        /// Флаг найденный ранее контракт.
+        /// </summary>
+        public bool FlagFoundLetter { get; set; }
+
     }
 }
