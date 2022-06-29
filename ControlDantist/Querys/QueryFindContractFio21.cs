@@ -41,12 +41,15 @@ namespace ControlDantist.Querys
                             declare @Surname nvarchar(100)
                             declare @NumContract nvarchar(50)
                             declare @DR date
+                            declare  @dateLocalTime  date
+							declare @numAct nvarchar(100)
                             set @FistName = '" + this.firstName + "' " +
-                                " set @Name = '" + this.name + "' " +
-                                " set @Surname = '" + this.surname + "' " +
-                                " set @DR = '" + this.dr + "' " +
-                                " set @NumContract = '" + this.numContract + "' " +
-                                @"select Фамилия, Имя, Отчество, ДоговорАрхив.НомерДоговора,ЛьготникАрхив.ДатаРождения,ДатаДоговора,[НомерАкта],
+                            " set @Name = '" + this.name + "' " +
+                            " set @Surname = '" + this.surname + "' " +
+                            " set @DR = '" + this.dr + "' " +
+                            " set @NumContract = '" + this.numContract + "' " +
+                            @" select @numAct = [НомерАкта] from (
+							select Фамилия, Имя, Отчество, ДоговорАрхив.НомерДоговора,ЛьготникАрхив.ДатаРождения,ДатаДоговора,[НомерАкта],
                             ДатаАктаВыполненныхРабот,
                             ДоговорАрхив.flagАнулирован,ДоговорАрхив.ФлагАнулирован, ФлагПроверки,ФлагНаличияАкта from ЛьготникАрхив
                             inner join ДоговорАрхив
@@ -56,17 +59,73 @@ namespace ControlDantist.Querys
                             where((
 							LOWER(RTRIM(LTRIM([Фамилия]))) = LOWER(LTRIM(RTRIM(@FistName))) and LOWER(LTRIM(RTRIM(Имя))) = LOWER(LTRIM(RTRIM(@Name)))
 							and  LOWER(LTRIM(RTRIM(Отчество))) = LOWER(LTRIM(RTRIM(@Surname)))
-							and (ЛьготникАрхив.ДатаРождения =  @DR) and YEAR(ДатаАктаВыполненныхРабот) >= " + this.year + "))  " +
-                            @" union
-                            select Фамилия, Имя, Отчество, ДоговорАрхив.НомерДоговора,ЛьготникАрхив.ДатаРождения,ДатаДоговора,[НомерАкта],
-                            ДатаАктаВыполненныхРабот,
-                            ДоговорАрхив.flagАнулирован,ДоговорАрхив.ФлагАнулирован, ФлагПроверки,ФлагНаличияАкта from ЛьготникАрхив
-                            inner join ДоговорАрхив
-                            on ЛьготникАрхив.id_льготник = ДоговорАрхив.id_льготник
-                            left outer join АктВыполненныхРаботАрхив
-                            on ДоговорАрхив.id_договор = АктВыполненныхРаботАрхив.id_договор
-                            where ДоговорАрхив.НомерДоговора =  @NumContract ";
-                          
+							and ((CONVERT(char(10), ЛьготникАрхив.ДатаРождения, 112) =  CONVERT(char(10), @DR, 112)) 
+							or (CONVERT(char(10), ЛьготникАрхив.ДатаРождения, 112) = CONVERT(char(10), @dateLocalTime, 112)))
+                            )) 
+							) as Tab1
+							if(@numAct is not null)
+							begin 
+								select Фамилия, Имя, Отчество, ДоговорАрхив.НомерДоговора,ЛьготникАрхив.ДатаРождения,ДатаДоговора,[НомерАкта],
+								ДатаАктаВыполненныхРабот,
+								ДоговорАрхив.flagАнулирован,ДоговорАрхив.ФлагАнулирован, ФлагПроверки,ФлагНаличияАкта from ЛьготникАрхив
+								inner join ДоговорАрхив
+								on ЛьготникАрхив.id_льготник = ДоговорАрхив.id_льготник
+								left outer join АктВыполненныхРаботАрхив
+								on ДоговорАрхив.id_договор = АктВыполненныхРаботАрхив.id_договор
+								where((
+								LOWER(RTRIM(LTRIM([Фамилия]))) = LOWER(LTRIM(RTRIM(@FistName))) and LOWER(LTRIM(RTRIM(Имя))) = LOWER(LTRIM(RTRIM(@Name)))
+								and  LOWER(LTRIM(RTRIM(Отчество))) = LOWER(LTRIM(RTRIM(@Surname)))
+								and ((CONVERT(char(10), ЛьготникАрхив.ДатаРождения, 112) =  CONVERT(char(10), @DR, 112)) 
+								or (CONVERT(char(10), ЛьготникАрхив.ДатаРождения, 112) = CONVERT(char(10), @dateLocalTime, 112)))) and НомерАкта is not null 
+                                and YEAR(ДоговорАрхив.ДатаАктаВыполненныхРабот) >= " + this.year + " ) " +
+                            @" end
+							else
+							begin
+								select Фамилия, Имя, Отчество, ДоговорАрхив.НомерДоговора,ЛьготникАрхив.ДатаРождения,ДатаДоговора,[НомерАкта],
+								ДатаАктаВыполненныхРабот,
+								ДоговорАрхив.flagАнулирован,ДоговорАрхив.ФлагАнулирован, ФлагПроверки,ФлагНаличияАкта from ЛьготникАрхив
+								inner join ДоговорАрхив
+								on ЛьготникАрхив.id_льготник = ДоговорАрхив.id_льготник
+								left outer join АктВыполненныхРаботАрхив
+								on ДоговорАрхив.id_договор = АктВыполненныхРаботАрхив.id_договор
+								where((
+								LOWER(RTRIM(LTRIM([Фамилия]))) = LOWER(LTRIM(RTRIM(@FistName))) and LOWER(LTRIM(RTRIM(Имя))) = LOWER(LTRIM(RTRIM(@Name)))
+								and  LOWER(LTRIM(RTRIM(Отчество))) = LOWER(LTRIM(RTRIM(@Surname)))
+								and ((CONVERT(char(10), ЛьготникАрхив.ДатаРождения, 112) =  CONVERT(char(10), @DR, 112)) 
+								or (CONVERT(char(10), ЛьготникАрхив.ДатаРождения, 112) = CONVERT(char(10), @dateLocalTime, 112)))) and НомерАкта is not null and YEAR(ДоговорАрхив.ДатаАктаВыполненныхРабот) >= " + this.year + ") " +
+                            " end ";
+
+       //     string query = @" declare @FistName nvarchar(100)
+       //                     declare @Name nvarchar(100)
+       //                     declare @Surname nvarchar(100)
+       //                     declare @NumContract nvarchar(50)
+       //                     declare @DR date
+       //                     set @FistName = '" + this.firstName + "' " +
+       //                         " set @Name = '" + this.name + "' " +
+       //                         " set @Surname = '" + this.surname + "' " +
+       //                         " set @DR = '" + this.dr + "' " +
+       //                         " set @NumContract = '" + this.numContract + "' " +
+       //                         @"select Фамилия, Имя, Отчество, ДоговорАрхив.НомерДоговора,ЛьготникАрхив.ДатаРождения,ДатаДоговора,[НомерАкта],
+       //                     ДатаАктаВыполненныхРабот,
+       //                     ДоговорАрхив.flagАнулирован,ДоговорАрхив.ФлагАнулирован, ФлагПроверки,ФлагНаличияАкта from ЛьготникАрхив
+       //                     inner join ДоговорАрхив
+       //                     on ЛьготникАрхив.id_льготник = ДоговорАрхив.id_льготник
+       //                     left outer join АктВыполненныхРаботАрхив
+       //                     on ДоговорАрхив.id_договор = АктВыполненныхРаботАрхив.id_договор
+       //                     where((
+       //LOWER(RTRIM(LTRIM([Фамилия]))) = LOWER(LTRIM(RTRIM(@FistName))) and LOWER(LTRIM(RTRIM(Имя))) = LOWER(LTRIM(RTRIM(@Name)))
+       //and  LOWER(LTRIM(RTRIM(Отчество))) = LOWER(LTRIM(RTRIM(@Surname)))
+       //and (ЛьготникАрхив.ДатаРождения =  @DR) and YEAR(ДатаАктаВыполненныхРабот) >= " + this.year + "))  " +
+       //                     @" union
+       //                     select Фамилия, Имя, Отчество, ДоговорАрхив.НомерДоговора,ЛьготникАрхив.ДатаРождения,ДатаДоговора,[НомерАкта],
+       //                     ДатаАктаВыполненныхРабот,
+       //                     ДоговорАрхив.flagАнулирован,ДоговорАрхив.ФлагАнулирован, ФлагПроверки,ФлагНаличияАкта from ЛьготникАрхив
+       //                     inner join ДоговорАрхив
+       //                     on ЛьготникАрхив.id_льготник = ДоговорАрхив.id_льготник
+       //                     left outer join АктВыполненныхРаботАрхив
+       //                     on ДоговорАрхив.id_договор = АктВыполненныхРаботАрхив.id_договор
+       //                     where ДоговорАрхив.НомерДоговора =  @NumContract ";
+
             return query;
         }
     }

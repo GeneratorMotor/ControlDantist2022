@@ -6,7 +6,7 @@ using ControlDantist.ExceptionClassess;
 using ControlDantist.Classes;
 using System;
 using System.Data;
-using ControlDantist.MedicalServices;
+using ControlDantist.ValidateEsrnLibrary;
 
 namespace UnitTestControlDantistPanel
 {

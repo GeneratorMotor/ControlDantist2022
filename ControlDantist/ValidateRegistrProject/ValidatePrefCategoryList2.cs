@@ -113,6 +113,7 @@ namespace ControlDantist.ValidateRegistrProject
             // Создаем временную таблицу.
             stringBuilder.Append(CreateTempTable("#t2_temp"));
 
+            // Заполнение временной таблицы.
             InsertDateTempTable(stringBuilder);
 
 

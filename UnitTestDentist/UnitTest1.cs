@@ -1250,6 +1250,16 @@ namespace UnitTestDentist
 
         }
 
+        [TestMethod]
+        public void ConvertDataTableToListTest()
+        {
+            // Arrange.
+            DataTable dataTable = new DataTable();
+
+
+
+        }
+
         private void BuildingSpike(object objParam, string numContract, PrintContractsValidate contr)
         {
 

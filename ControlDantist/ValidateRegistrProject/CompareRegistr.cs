@@ -25,7 +25,12 @@ namespace ControlDantist.ValidateRegistrProject
         /// <param name="dataTable"></param>
         public void Compare(DataTable dataTableFio, DataTable dataTableDoc)
         {
-             if (dataTableFio?.Rows?.Count > 0)
+
+            var test1 = dataTableFio.Rows.Count;
+
+            var test2 = dataTableDoc.Rows.Count;
+
+            if (dataTableFio?.Rows?.Count > 0)
             {
                 // Пройдемся по записям таблицы с ФИО и паспортом.
                 foreach (DataRow row in dataTableFio.Rows)

@@ -109,8 +109,8 @@ namespace ControlDantist.DisplayLetter
             int currentYear = DateTime.Now.Year;
 
             // Получим год окончания проверки.
-            //return currentYear - 2;
-            return currentYear - 4;
+            return currentYear - 2;
+           // return currentYear - 4;
         }
     }
 }

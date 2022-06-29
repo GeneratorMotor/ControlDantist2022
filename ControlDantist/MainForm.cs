@@ -4546,6 +4546,8 @@ namespace ControlDantist
                     //docPrint.Execute();
                 }
 
+                var asdTest = "";
+
                 // Если список договров больше 0 тогда проводим проверку в ЭСРН.
                 if (listDoc != null && listDoc.Count > 0)
                 {

@@ -5,6 +5,9 @@ using ControlDantist.Classes;
 using ControlDantist.DataBaseContext;
 using System.Threading;
 using ConfigLibrary;
+using ControlDantist.FactoryConnectionStringBD;
+using ControlDantist.FactoryClass;
+using ControlDantist.ValidateEsrnLibrary;
 
 namespace ControlDantist.ValidateRegistrProject
 {
@@ -13,6 +16,20 @@ namespace ControlDantist.ValidateRegistrProject
         private bool flagError = false;
 
         private List<ItemLibrary> list;
+
+        private FactoryConnectionStringDB factoryConnection;
+
+        // Фабрика для поиска льготника по ФИО и номеру удостоверания.
+        private FactorySqlQueryEsrnValidate factorySqlQuery;
+
+        // Перменнеая для поиска льготника по ФИО и номеру удостоверения.
+        private IBuilderTempTable builderTempTable;
+
+        // Фабрика для поиска льготника по ФИО и номеру паспорта.
+        private FactorySqlQueryEsrnValidatePassword factoryPasswordSqlQuery;
+
+        // Переменная для поиска льготника по ФИО и номеру пасспорта.
+        private IBuilderTempTable builderTempTablePassword;
 
         static Mutex mutexObj = new Mutex();
         public EsrnPersonValidate(List<ItemLibrary> list)
@@ -25,19 +42,23 @@ namespace ControlDantist.ValidateRegistrProject
             {
                 throw new System.Exception("Отсутствуют данные для проверки по ЭСРН - EsrnPersonValidate");
             }
+
+            // Создадим экземпляр фабрики подключения строк к БД.
+            factoryConnection = new FactoryConnectionStringDB();
+
+            // Фабрика формирования SQL запросв к БД.
+            factorySqlQuery = new FactorySqlQueryEsrnValidate();
+
+            factoryPasswordSqlQuery = new FactorySqlQueryEsrnValidatePassword();
         }
 
         public void Validate()
         {
-            // Строки подключения к БД АИС ЭСРН.
-            ConfigLibrary.Config config = new ConfigLibrary.Config();
-
-            //Пока закоментирован.
-            //Получаем словарь со строками подключения к АИС ЭСРН.
-            Dictionary<string, string> pullConnect = config.Select();
+            // Получим строки подключения к БД в районах области.
+            IConfig pullConnection = factoryConnection.ConnectionStringDB();
 
             // Пройдемся по строкам подключения.
-            foreach (KeyValuePair<string, string> dStringConnect in pullConnect)
+            foreach (KeyValuePair<string, string> dStringConnect in pullConnection.Select())
             {
                 mutexObj.WaitOne();
 
@@ -47,18 +68,18 @@ namespace ControlDantist.ValidateRegistrProject
 
                 // TODO: Отключем проверку договоров.
                 // Отключим проверку по ЭСРН.
-                continue;
+                //continue;
 
                 //// TODO: Отключим районы.
                 //////Оставим участок кода для отработки быстроого подключения
                 /////// К нужному району.
-                //if (sKey.Trim() != "Балаковоский".Trim())
-                //{
+                if (sKey.Trim() != "Ленинский".Trim())
+                {
 
-                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
-                //    var sTestTestt = "";
-                //    continue;
-                //}
+                    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                    var sTestTestt = "";
+                    continue;
+                }
                 //else
                 //{
                 //    var testConnecrt = "Ленинский";
@@ -87,44 +108,76 @@ namespace ControlDantist.ValidateRegistrProject
 
                     // Переменная для хранения льготной категории.
                     string cateroryPerson = string.Empty;
-
-                    // Проверим льготника по ФИО и номеру документа.
-                    IEsrnValidate validatePrefCategoryList2 = new ValidatePrefCategoryList2(this.list);
-
-
-                    IBuilderQueryValidate queryFindPersonToFioNumDoc = new BuilderQueryValidator(validatePrefCategoryList2);
-
                     // Переменная дя хранения строки запроса.
                     string queryФИО = string.Empty;
 
-                    // Строка SQL Запроса.
-                    queryФИО = queryFindPersonToFioNumDoc.Query();
+                    // Воспользуемся Фабрикой с паттерном Builder.
+                    builderTempTable = new BuilderQueryFindPerson(factorySqlQuery, "#t2_temp", this.list);
 
+                    // Сформируем SQL запрос к БД на поиск льготника по ФИО и по номеру документа.
+                    ControlBuilderQueryFindPerson controlBuilderQueryFindPerson = new ControlBuilderQueryFindPerson(builderTempTable);
+                    queryФИО = controlBuilderQueryFindPerson.CreateBuilder();
+
+                    // Объявление начала транзакции.
                     SqlTransaction sqlTransaction = con.BeginTransaction();
 
-                    // Получим льготников найденных в ЭСРН по документам дающим право на получение льгот.
+                    // Получим льготников найденных в ЭСРН по ФИО и документам дающим право на получение льгот.
                     DataTable tabФИО = ТаблицаБД.GetTableSQL(queryФИО, "ФИО", con, sqlTransaction);
 
-                    // Поиск по ФИО и паспорту.
-                    IEsrnValidate validatePersonPassword = new ValidatePersonFioPassword(this.list);
+                    var test3 = tabФИО;
 
-                    // Поиск по ФИО и номеру документа.
-                    IBuilderQueryValidate queryFindPersonToPassword = new BuilderQueryValidator(validatePersonPassword);
+                    var test4 = "";
+
+                    if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
+                    {
+                        // Сконвертируем данные из таблицв в список.
+                        IConvertor<DatePerson> convertor = new ConvertDTableToList(tabФИО);
+
+                        List<DatePerson> listDate = convertor.ConvertDate();
+
+                        var iTest1 = "";
+
+                        if(listDate.Count > 0)
+                        {
+                            string iTest2 = "";
+
+                            // Проведем проверку данных по льготникам.
+                            IValidateЭсрн validateЭсрн = new ПроверкаЭсрн(listDate, this.list);
+                            validateЭсрн.Validate();
+
+                        }
+
+                    }
+
+
+                    string ads = "";
+
+                    // Пока закоментируем проверку по номеру документа.
+                    /*
+
+                    builderTempTablePassword = new BuilderQueryFindPerson(factoryPasswordSqlQuery, "#t3_temp", this.list);
 
                     // Переменная дя хранения строки запроса.
                     string queryФиоPassword = string.Empty;
 
-                    // Строка SQL Запроса.
-                    queryФиоPassword = queryFindPersonToPassword.Query();
+                    // Сформируем SQL запрос к БД на поиск льготника по ФИО и по номеру паспорта.
+                    ControlBuilderQueryFindPerson controlBuilderQueryFindPersonPassword = new ControlBuilderQueryFindPerson(builderTempTablePassword);
+                    queryФиоPassword = controlBuilderQueryFindPersonPassword.CreateBuilder();
 
-                    // Получим льготников найденных в ЭСРН по документам дающим право на получение льгот.
+                    // Получим льготников найденных в ЭСРН по паспорту.
                     DataTable tabФиоPassword = ТаблицаБД.GetTableSQL(queryФиоPassword, "ФиоPassword", con, sqlTransaction);
 
+                    */
+
                     // Словарь для хранения id договоров которые прошли проверку.
-                    Dictionary<int, int> idContracts = new Dictionary<int, int>();
+                    //Dictionary<int, int> idContracts = new Dictionary<int, int>();
 
                     // Проверка список договоров.
                     var listEsrnPerson = this.list;
+
+                    string iTest = "test";
+
+                    /*
 
                     // Пометим прошедших проверку.
                     //if (tabФИО?.Rows?.Count > 1 && tabФиоPassword?.Rows?.Count > 1)
@@ -135,15 +188,8 @@ namespace ControlDantist.ValidateRegistrProject
                         compareRegistr.Compare(tabФИО, tabФиоPassword);
                     }
 
-                    //if(tabФиоPassword?.Rows?.Count > 1)
-                    //{
-                    //    // Пометим прошедших проверку.
-                    //    CompareRegistr compareRegistr = new CompareRegistr(this.list);
-                    //    compareRegistr.Compare(tabФиоPassword);
-                    //}
-
-                    // Генерируем запрос на поиск льготников в ЭСРН по Фио и номеру паспората.
-                    //validatePrefCategoryList2.FindPersonsFioDoc()
+                    */
+                    
                 }
 
                 mutexObj.ReleaseMutex();
