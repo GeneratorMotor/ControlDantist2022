@@ -124,10 +124,6 @@ namespace ControlDantist.ValidateRegistrProject
                     // Получим льготников найденных в ЭСРН по ФИО и документам дающим право на получение льгот.
                     DataTable tabФИО = ТаблицаБД.GetTableSQL(queryФИО, "ФИО", con, sqlTransaction);
 
-                    var test3 = tabФИО;
-
-                    var test4 = "";
-
                     if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
                     {
                         // Сконвертируем данные из таблицв в список.
@@ -135,16 +131,12 @@ namespace ControlDantist.ValidateRegistrProject
 
                         List<DatePerson> listDate = convertor.ConvertDate();
 
-                        var iTest1 = "";
-
+                        // Проверим есть ли записи в результате выгрузки из ЭСРН.
                         if(listDate.Count > 0)
                         {
-                            string iTest2 = "";
-
                             // Проведем проверку данных по льготникам.
                             IValidateЭсрн validateЭсрн = new ПроверкаЭсрн(listDate, this.list);
                             validateЭсрн.Validate();
-
                         }
 
                     }

@@ -20,13 +20,42 @@ namespace ControlDantist.ValidateEsrnLibrary
             this.list = list ?? throw new ArgumentNullException(nameof(list));
         }
 
+        /// <summary>
+        /// Проверка льготника по данным полученным из ЭСРН.
+        /// </summary>
         public void Validate()
         {
-           
+            // Откажемся пока от паттерна строитель.
+            foreach (var person in this.list.OrderBy(w => w.Packecge.льготник.Фамилия))
+            {
+                // Класс
+                DiscriptionValidate discriptionError = new DiscriptionValidate();
 
-            //foreach(var person in this.list.Where(w=>w.FlagValidateEsrn == false))
-            foreach (var person in this.list.OrderBy(w=>w.Packecge.льготник.Фамилия))
+                // Шаблон строитель (частично реализованный) без прораба.
+                ValidPersonEsrn validPersonEsrn = new ValidPersonEsrn(discriptionError);
+
+                // Проверим ФИО и ДР.
+                foreach (var itm in this.listPerson.OrderBy(w => w.Фамилия))
                 {
+                    validPersonEsrn.ValidFioDr(person, itm);
+
+                    // Проверка паспорта.
+                    var passwords = this.listPerson.Where(w => w.НаименованиеДокумента.Trim().ToLower() == "Паспорт гражданина России".Trim().ToLower()).OrderBy(w => w.Фамилия).ToList();
+
+                    foreach (var pass in passwords)
+                    {
+                        validPersonEsrn.ValidPassword(person, pass);
+                    }
+                }
+
+               
+
+
+            }
+
+            #region Старая реализация
+            foreach (var person in this.list.OrderBy(w=>w.Packecge.льготник.Фамилия))
+            {
                 // Массив флагов проверки Фамилии.
                 bool[] flagFirstName = new bool[10];
                 //bool[] flagFirstName = new bool[7];
@@ -170,11 +199,10 @@ namespace ControlDantist.ValidateEsrnLibrary
                     {
                         person.FlagValidateEsrn = true;
                     }
-
                 }
-
-
             }
+
+            #endregion
         }
     }
 }

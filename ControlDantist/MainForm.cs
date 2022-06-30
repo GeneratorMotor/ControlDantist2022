@@ -41,6 +41,8 @@ using ControlDantist.ReportCountYear;
 using ControlDantist.ReportFill;
 using ControlDantist.FactorySqlQuery;
 using System.Configuration;
+using ControlDantist.ValididtyTicket;
+using ControlDantist.ValidateEsrnLibrary;
 
 
 
@@ -4354,7 +4356,7 @@ namespace ControlDantist
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 // Получили имя класса.
-                fileName = openFileDialog1.FileName;
+                    fileName = openFileDialog1.FileName;
 
                 //try
                 //{
@@ -5893,6 +5895,95 @@ namespace ControlDantist
         {
             FormLimitYear formLimitYear = new FormLimitYear();
             formLimitYear.Show();
+        }
+
+        private void проверкаБилетовМинистерствоToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Читаем из файла номера билетов.
+            List<string> listBarCode = new List<string>();
+
+            listBarCode.Add("8833005");
+
+            // Фабрика для получения данных из ЕСПБ.
+            FactorySqlQueryTicket factorySqlQueryTicket = new FactorySqlQueryTicket();
+
+            BuilderQueryFindTicketEspb queryFindTicketEspb = new BuilderQueryFindTicketEspb(factorySqlQueryTicket, "#tab2", listBarCode);
+            //queryFindTicketEspb.CreateTempTable()
+
+            // Переменная для хранения значений PC_GUID льготниклов которые купили билет.
+            DataTable tabPC_GUID;
+
+            ControlBuilderQueryFindTicket controlBuilderTiket = new ControlBuilderQueryFindTicket(queryFindTicketEspb);
+            string builderEsrnTicket = controlBuilderTiket.CreateBuilder();
+
+            string sCon = "Data Source=10.159.102.21;Initial Catalog=espb;User ID=sa;Password=sitex";
+
+            using (SqlConnection con = new SqlConnection(sCon))
+            {
+                try
+                {
+                    // Получим льготников найденных в ЭСРН по ФИО и документам дающим право на получение льгот.
+                    DataTable tabФИО = ТаблицаБД.GetTableSQL(builderEsrnTicket, "БилетыЕспб", con);
+
+                    if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
+                    {
+                        // Скопируем данные в переменную.
+                        tabPC_GUID = tabФИО;
+
+                        IQuery insertDateEspb = new InsertDateEspb(tabФИО);
+                        string insertTest = insertDateEspb.Query();
+
+                        con.Open();
+
+                        // Запишем данные из ЕСПБ в таблицу DateEspb базы данных НалоговаяЗапросБилеты.
+                        SqlCommand com = new SqlCommand(insertTest, con);
+                        com.ExecuteNonQuery();
+
+                    }
+
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+                MessageBox.Show("Базу Еспб прочитали, переходим к ЭСРН.");
+
+                
+
+
+
+                if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
+                {
+
+                   
+
+                    string iTestInsert = "";
+
+
+                    // Сконвертируем данные из таблицв в список.
+                    IConvertor<DatePerson> convertor = new ConvertDTableToList(tabФИО);
+
+                    List<DatePerson> listDate = convertor.ConvertDate();
+
+                    //// Проверим есть ли записи в результате выгрузки из ЭСРН.
+                    //if (listDate.Count > 0)
+                    //{
+                    //    // Проведем проверку данных по льготникам.
+                    //    IValidateЭсрн validateЭсрн = new ПроверкаЭсрн(listDate, this.list);
+                    //    validateЭсрн.Validate();
+                    //}
+
+                }
+            }
+
+               
+
+            
+
+            string iTest = "";
+
+
         }
     }
 }

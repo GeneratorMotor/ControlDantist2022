@@ -492,6 +492,7 @@
     <Compile Include="FactoryClass\FactorySqlQueryEsrnValidate.cs" />
     <Compile Include="FactoryClass\FactorySqlQueryEsrnValidatePassword.cs" />
     <Compile Include="FactoryConnectionStringBD\FactoryConnectionStringDB.cs" />
+    <Compile Include="FactorySqlQuery\FactorySqlQueryTicket.cs" />
     <Compile Include="FactorySqlQuery\ICreateSqlQuery.cs" />
     <Compile Include="FactorySqlQuery\IQueryFactory.cs" />
     <Compile Include="FactorySqlQuery\QuerySqlReportInformStomatolog.cs" />
@@ -1065,6 +1066,7 @@
     <Compile Include="ValidateEsrnLibrary\ConvertDTableToList.cs" />
     <Compile Include="ValidateEsrnLibrary\CreateTempTable.cs" />
     <Compile Include="ValidateEsrnLibrary\DatePerson.cs" />
+    <Compile Include="ValidateEsrnLibrary\DiscriptionValidate.cs" />
     <Compile Include="ValidateEsrnLibrary\FindPersonPasswordQuery.cs" />
     <Compile Include="ValidateEsrnLibrary\FindPersonQuery.cs" />
     <Compile Include="ValidateEsrnLibrary\IBuilderTempTable.cs" />
@@ -1072,6 +1074,8 @@
     <Compile Include="ValidateEsrnLibrary\InsertDateTempTable.cs" />
     <Compile Include="ValidateEsrnLibrary\IQueryInsertDate.cs" />
     <Compile Include="ValidateEsrnLibrary\IValidateЭсрн.cs" />
+    <Compile Include="ValidateEsrnLibrary\IValidPersonEsrn.cs" />
+    <Compile Include="ValidateEsrnLibrary\ValidPersonEsrn.cs" />
     <Compile Include="ValidateEsrnLibrary\ПроверкаЭсрн.cs" />
     <Compile Include="ValidateMedicalServices\ValidateServicesMedical.cs" />
     <Compile Include="ValidateRegistrProject\BuilderQueryValidator.cs" />
@@ -1090,6 +1094,15 @@
     <Compile Include="ValidateRegistrProject\TestClass.cs" />
     <Compile Include="ValidateRegistrProject\ValidatePersonFioPassword.cs" />
     <Compile Include="ValidateRegistrProject\ValidatePrefCategoryList2.cs" />
+    <Compile Include="ValididtyTicket\BuilderQueryFindTicketEspb.cs" />
+    <Compile Include="ValididtyTicket\ControlBuilderQueryFindTicket.cs" />
+    <Compile Include="ValididtyTicket\CreateTempTableTicket.cs" />
+    <Compile Include="ValididtyTicket\CreateTempTableЭСРН.cs" />
+    <Compile Include="ValididtyTicket\FIndTicket.cs" />
+    <Compile Include="ValididtyTicket\InsertDateEspb.cs" />
+    <Compile Include="ValididtyTicket\InsertTableTicket.cs" />
+    <Compile Include="ValididtyTicket\InsertTableЭсрн.cs" />
+    <Compile Include="ValididtyTicket\ФабрикаSQLЭсрн.cs" />
     <Compile Include="ValidPersonContract\CompareContract.cs" />
     <Compile Include="ValidPersonContract\CompareContractForNumber.cs" />
     <Compile Include="ValidPersonContract\DocPrint.cs" />

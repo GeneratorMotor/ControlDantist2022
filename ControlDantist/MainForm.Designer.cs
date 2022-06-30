@@ -64,6 +64,7 @@ namespace ControlDantist
             this.включитьИзменениеСтоимостиДоговораToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.отключитьПроверкуСерверовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.лимитДенежныхСредствToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.резултатПроверокToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.договораПрошедшиеПроверкуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.возвратПроектовДоговоровToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,7 +97,7 @@ namespace ControlDantist
             this.районыОбластиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.провестиПроверкуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.поискУчастиниковВОВToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.проверкаБилетовМинистерствоToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -132,7 +133,8 @@ namespace ControlDantist
             this.статистикаToolStripMenuItem,
             this.остаткиЛБОToolStripMenuItem,
             this.сЧЕТАФАКТУРЫToolStripMenuItem,
-            this.уУстраняемКасякСАктамиToolStripMenuItem});
+            this.уУстраняемКасякСАктамиToolStripMenuItem,
+            this.проверкаБилетовМинистерствоToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.файлToolStripMenuItem.Text = "Файл";
@@ -408,6 +410,13 @@ namespace ControlDantist
             this.лимитДенежныхСредствToolStripMenuItem.Text = "Лимит денежных средств";
             this.лимитДенежныхСредствToolStripMenuItem.Click += new System.EventHandler(this.лимитДенежныхСредствToolStripMenuItem_Click);
             // 
+            // общийЛимитДенежныхСредствЗаГодToolStripMenuItem
+            // 
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Name = "общийЛимитДенежныхСредствЗаГодToolStripMenuItem";
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Size = new System.Drawing.Size(367, 22);
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Text = "Лимит денежных средств за год";
+            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Click += new System.EventHandler(this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem_Click);
+            // 
             // резултатПроверокToolStripMenuItem
             // 
             this.резултатПроверокToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -660,12 +669,12 @@ namespace ControlDantist
             this.поискУчастиниковВОВToolStripMenuItem.Text = "Поиск участиников ВОВ";
             this.поискУчастиниковВОВToolStripMenuItem.Click += new System.EventHandler(this.поискУчастиниковВОВToolStripMenuItem_Click);
             // 
-            // общийЛимитДенежныхСредствЗаГодToolStripMenuItem
+            // проверкаБилетовМинистерствоToolStripMenuItem
             // 
-            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Name = "общийЛимитДенежныхСредствЗаГодToolStripMenuItem";
-            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Size = new System.Drawing.Size(367, 22);
-            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Text = "Лимит денежных средств за год";
-            this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem.Click += new System.EventHandler(this.общийЛимитДенежныхСредствЗаГодToolStripMenuItem_Click);
+            this.проверкаБилетовМинистерствоToolStripMenuItem.Name = "проверкаБилетовМинистерствоToolStripMenuItem";
+            this.проверкаБилетовМинистерствоToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
+            this.проверкаБилетовМинистерствоToolStripMenuItem.Text = "Проверка билетов Министерство";
+            this.проверкаБилетовМинистерствоToolStripMenuItem.Click += new System.EventHandler(this.проверкаБилетовМинистерствоToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -757,5 +766,6 @@ namespace ControlDantist
         private System.Windows.Forms.ToolStripMenuItem залитьФайлыДляПроверкиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem статистикаКонецГодаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem общийЛимитДенежныхСредствЗаГодToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem проверкаБилетовМинистерствоToolStripMenuItem;
     }
 }
