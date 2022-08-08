@@ -21,6 +21,10 @@ namespace ControlDantist.ValidPersonContract
 
         List<ValidItemsContract> listContracts;
 
+        /// <summary>
+        /// Сверка реестра проектов договоров с данными из ЭСРН.
+        /// </summary>
+        /// <param name="listRegistr">Данные из реестра проектов договоров.</param>
         public ValidateContractPerson(List<ItemLibrary> listRegistr)
         {
             if (listRegistr != null && listRegistr.Count > 0)

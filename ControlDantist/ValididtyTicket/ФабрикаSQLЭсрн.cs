@@ -7,16 +7,16 @@ using ControlDantist.Querys;
 
 namespace ControlDantist.ValididtyTicket
 {
-    public class ФабрикаSQLЭсрн : FactorySqlQueryTicket
+    public class ФабрикаSQLЭсрн 
     {
         /// <summary>
         /// Sql запрос на создание временной таблицы на удаленном сервере.
         /// </summary>
         /// <param name="nameTempTable">Название временной таблицы.</param>
         /// <returns>SQL запрос на создание временной таблицы.</returns>
-        public override IQuery CreateTempTableTicketSqlQuery(string nameTempTable)
+        public IQuery CreateTempTableЭсрнSqlQuery(string nameTempTable)
         {
-            return new CreateTempTableTicket(nameTempTable);
+            return new CreateTempTableЭСРН(nameTempTable);
         }
 
         /// <summary>
@@ -24,18 +24,18 @@ namespace ControlDantist.ValididtyTicket
         /// </summary>
         /// <param name="list">Список с данными по льготникам.</param>
         /// <returns>Sql запрос на добавление данных во временную таблицу.</returns>
-        public override IQuery InsertDateTempTicketTableSqlQuery(List<string> list, string nameTable)
+        public IQuery InsertDateTempЭсрнTableSqlQuery(List<string> list, string nameTable)
         {
-            return new InsertTableTicket(list, nameTable);
+            return new InsertTableЭсрн(list, nameTable);
         }
 
         /// <summary>
         /// Sql запрос на поиск льготников в БД.
         /// </summary>
         /// <returns>Sql запрос на поиск льготников по удаленной базе данных.</returns>
-        public override IQuery FindPersonTiketSqlQuery(string tempNameTable)
+        public IQuery FindPersonЭсрнSqlQuery(string tempNameTable)
         {
-            return new FIndTicket(tempNameTable);
+            return new FindЭсрн(tempNameTable);
         }
     }
 }

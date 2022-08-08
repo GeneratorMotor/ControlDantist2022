@@ -18,7 +18,9 @@ using ControlDantist.Querys;
 using ControlDantist.ValidPersonContract;
 using System.Threading;
 using System.Text;
-
+using ControlDantist.ValidateEsrnLibrary;
+using ControlDantist.ValidateEsrnLibrary.CompareDate;
+using ControlDantist.ValidateEsrnLibrary.Decoration;
 
 namespace UnitTestDentist
 {
@@ -1251,14 +1253,80 @@ namespace UnitTestDentist
         }
 
         [TestMethod]
-        public void ConvertDataTableToListTest()
-        {
-            // Arrange.
-            DataTable dataTable = new DataTable();
+       public void ValidatePersonTest()
+       {
+            DatePerson datePerson = new DatePerson();
+            datePerson.Фамилия = "Калмыкова";
+            datePerson.Имя = "Анна";
+            datePerson.Отчество = "Ивановна";
+
+            DateTime drАни = new DateTime(1985, 10, 16);
+
+            datePerson.ДатаРождения = drАни;
+
+            DatePerson datePerson2 = new DatePerson();
+            datePerson2.Фамилия = "Дугин";
+            datePerson2.Имя = "Евгений";
+            datePerson2.Отчество = "Викторович";
+
+            DateTime drЯ = new DateTime(1973, 9, 24);
+
+            datePerson2.ДатаРождения = drЯ;
+
+            List<DatePerson> listPerson = new List<DatePerson>();
+            //listPerson.Add(datePerson);
+
+            listPerson.Add(datePerson2);
+
+            DateTime drЯTest = new DateTime(1973, 9, 25);
+
+            ТЛЬготник тЛготник = new ТЛЬготник();
+            тЛготник.Фамилия = "Дугин";
+            тЛготник.Имя = "Евгений";
+            тЛготник.Отчество = "Витальевич";
+            тЛготник.ДатаРождения = drЯTest;
+
+            ItemLibrary itemLibrary = new ItemLibrary();
+
+            PackageClass packageClass = new PackageClass();
+            packageClass.льготник = тЛготник;
+
+            itemLibrary.Packecge = packageClass;
+
+            //foreach (var person in listPerson.Where(w => w.FlagValidateEsrn == false).OrderBy(w => w.Packecge.льготник.Фамилия))
+            foreach (var person in listPerson)
+            {
+                // Сверка по ФИО.
+                ICompareRegistrPerson component = new CompareFioEsrn(listPerson, itemLibrary);
+                var test1 = component.ComparePerson();
+
+                // Сверка по Д.Р.
+                ICompareRegistrPerson component2 = new CompareDateBirth(listPerson, itemLibrary);
+                var test2 = component2.ComparePerson();
+
+                ICompareRegistrPerson componentPassword = new ComparePassword(listPerson, itemLibrary);
+                var testPassword = componentPassword.ComparePerson();
+
+                ICompareRegistrPerson componentDocument = new CompareDocument(listPerson, itemLibrary);
+                var testDoc = componentDocument.ComparePerson();
+
+
+                //// Проверка по ФИО.
+                //CompareDatePerson compareRegistr = new CompareFioEsrn(listPerson, itemLibrary);
+                //var test1 = compareRegistr.ComparePerson();
+
+                //// Проверка по д.р.
+                //CompareDateBirth compareDateBirth = new CompareDateBirth(listPerson, itemLibrary);
+                //var test2 = compareDateBirth.ComparePerson();
 
 
 
+                //var test3 = test2.ToString();
+
+                var asd = "";
+            }
         }
+
 
         private void BuildingSpike(object objParam, string numContract, PrintContractsValidate contr)
         {

@@ -9,123 +9,91 @@ namespace ControlDantist.ValidateEsrnLibrary
     public class ValidPersonEsrn : IValidPersonEsrn
     {
 
-        DiscriptionValidate discriptionError;
+        //DiscriptionValidate discriptionError;
 
-        public ValidPersonEsrn(DiscriptionValidate discriptionError)
+        //public ValidPersonEsrn(DiscriptionValidate discriptionError)
+        public ValidPersonEsrn()
         {
-            this.discriptionError = discriptionError ?? throw new ArgumentNullException(nameof(discriptionError));
+            //this.discriptionError = discriptionError ?? throw new ArgumentNullException(nameof(discriptionError));
         }
 
-        public bool FlagValid()
-        {
-            throw new NotImplementedException();
-        }
+        //public bool FlagValid()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public void InstallFlagValid()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ValidDocument(ItemLibrary itemLibrary, DatePerson datePerson)
-        {
-            var серияДокР = itemLibrary.Packecge.льготник.СерияДокумента ?? "".Trim().ToLower();
-            var серияДокумента = datePerson.СерияДокумента ?? "".Trim().ToLower();
-
-            if (серияДокР.ToLower().Trim() == серияДокумента.ToLower().Trim())
-            {
-                this.discriptionError.SetFlag(true, "");
-            }
-            else
-            {
-                this.discriptionError.SetFlag(false, " Ошибка СЕРИЯ ДОКУМЕНТА ");
-            }
-
-            var номерДокументаР = itemLibrary.Packecge.льготник.НомерДокумента ?? "".Trim().ToLower();
-
-            var номерДокумента = datePerson.НомерДокумента ?? "".Trim().ToLower();
-
-            if (номерДокументаР.ToLower().Trim() == номерДокумента.ToLower().Trim())
-            {
-                this.discriptionError.SetFlag(true, "");
-            }
-            else
-            {
-                this.discriptionError.SetFlag(false, " Ошибка НОМЕР ДОКУМЕНТА ");
-            }
-
-            var датаВыдачиДокументаР = string.Empty;
-            var датаВыдачиДокумента = string.Empty;
-
-            if (itemLibrary.Packecge.льготник.ДатаВыдачиДокумента != null)
-            {
-                датаВыдачиДокументаР = itemLibrary.Packecge.льготник.ДатаВыдачиДокумента.ToShortDateString().Trim().ToLower();
-            }
-
-            if (datePerson.ДатаВыдачи != null)
-            {
-                датаВыдачиДокумента = datePerson.ДатаВыдачи.ToShortDateString().Trim().ToLower();
-            }
-
-            if (датаВыдачиДокументаР.ToLower().Trim() == датаВыдачиДокумента.ToLower().Trim())
-            {
-                this.discriptionError.SetFlag(true, "");
-            }
-            else
-            {
-                this.discriptionError.SetFlag(false, " Дата выдачи ДОКУМЕНТА ");
-            }
-        }
-
+        //public void InstallFlagValid()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
-        /// Проверка льготника по ФИО и дате рождения.
+        /// Сверка докментов из реестра со списком документов
         /// </summary>
-        /// <param name="itemLibrary">Данные по льготнику из реестра.</param>
-        /// <param name="datePerson">Данные по льготнику из ЭСРН.</param>
-        public void ValidFioDr(ItemLibrary itemLibrary, DatePerson datePerson)
+        /// <param name="itemLibrary"></param>
+        /// <param name="datePerson"></param>
+        public void ValidDocument(ItemLibrary itemLibrary, DatePerson datePerson)
         {
 
+            // Серия документа из реестра.
+            var серияДокР = itemLibrary.Packecge.льготник.СерияДокумента ?? "".Trim().ToLower();
+
+            // Серия документа из ЭСРН.
+            var серияДокумента = datePerson.СерияДокумента ?? "".Trim().ToLower();
+
+            // Уберем все пробелы из серии документа и сравним оставшиеся строки.
+            if(string.Compare(серияДокР.Replace(" ", string.Empty), серияДокумента.Replace(" ", string.Empty)) == 0)
+            {
+
+            }
+
+        }
+
+        public void ValidDr(ItemLibrary itemLibrary, DatePerson datePerson)
+        {
+
+            //// Сравним данные по Фамилии.
+            if (DateTime.Compare(itemLibrary.Packecge.льготник.ДатаРождения.Date,datePerson.ДатаРождения.Date) == 0)
+            {
+                // Если данные совподают тогда
+                itemLibrary.DiscriptionValidate.SetFlag(true, "");
+
+            }
+            else
+            {
+                itemLibrary.DiscriptionValidate.SetFlag(false, " Ошибка Дата рождения; ");
+            }
+        }
+
+
+        public void ValidFirstName(ItemLibrary itemLibrary, DatePerson datePerson)
+        {
+            // Присвоим 
+            itemLibrary.DiscriptionValidate = new DiscriptionValidate();
+
+            //// Сравним данные по Фамилии.
             if (itemLibrary.Packecge.льготник.Фамилия.ToLower().Trim() == datePerson.Фамилия.ToLower().Trim())
             {
-                this.discriptionError.SetFlag(true, "");
+                // Если данные совподают тогда
+                itemLibrary.DiscriptionValidate.SetFlag(true, "");
             }
             else
             {
-                this.discriptionError.SetFlag(false, " Ошибка Фамилия ");
+                itemLibrary.DiscriptionValidate.SetFlag(false, " Ошибка Фамилия; ");
             }
+        }
 
+        public void ValidName(ItemLibrary itemLibrary, DatePerson datePerson)
+        {
+            //// Сравним данные по Фамилии.
             if (itemLibrary.Packecge.льготник.Имя.ToLower().Trim() == datePerson.Имя.ToLower().Trim())
             {
-                this.discriptionError.SetFlag(true, "");
+                // Если данные совподают тогда
+                itemLibrary.DiscriptionValidate.SetFlag(true, "");
             }
             else
             {
-                this.discriptionError.SetFlag(false, " Ошибка Имя ");
-            }
-
-            // Отчество из реестра.
-            var secondNameR = itemLibrary.Packecge.льготник.Отчество ?? "".Trim();
-
-            // Отчетство из ЭСРН.
-            var отчество = datePerson.Отчество ?? "".Trim();
-
-            if (secondNameR.ToLower().Trim() == отчество.ToLower().Trim())
-            {
-                this.discriptionError.SetFlag(true, "");
-            }
-            else
-            {
-                this.discriptionError.SetFlag(false, " Ошибка Отчество ");
-            }
-
-
-            if (itemLibrary.Packecge.льготник.ДатаРождения.ToShortDateString().Trim() == datePerson.ДатаРождения.ToShortDateString().Trim())
-            {
-                this.discriptionError.SetFlag(true, "");
-            }
-            else
-            {
-                this.discriptionError.SetFlag(false, " Ошибка Дата рождения ");
+                itemLibrary.DiscriptionValidate.SetFlag(false, " Ошибка Имя; ");
             }
         }
 
@@ -142,11 +110,11 @@ namespace ControlDantist.ValidateEsrnLibrary
 
             if (серияПасспортаР.ToLower().Trim() == серияДокумента.ToLower().Trim())
             {
-                this.discriptionError.SetFlag(true, "");
+                itemLibrary.DiscriptionValidate.SetFlagPassword(true, "");
             }
             else
             {
-                this.discriptionError.SetFlag(false, " Ошибка СЕРИЯ ПАСПОРТА ");
+                itemLibrary.DiscriptionValidate.SetFlagPassword(false, " Ошибка СЕРИЯ ПАСПОРТА; ");
             }
 
             var номерПасспортаР = itemLibrary.Packecge.льготник.НомерПаспорта ?? "".Trim().ToLower();
@@ -155,11 +123,11 @@ namespace ControlDantist.ValidateEsrnLibrary
 
             if (номерПасспортаР.ToLower().Trim() == номерДокумента.ToLower().Trim())
             {
-                this.discriptionError.SetFlag(true, "");
+                itemLibrary.DiscriptionValidate.SetFlagPassword(true, "");
             }
             else
             {
-                this.discriptionError.SetFlag(false, " Ошибка НОМЕР ПАСПОРТА ");
+                itemLibrary.DiscriptionValidate.SetFlagPassword(false, " Ошибка НОМЕР ПАСПОРТА; ");
             }
 
             // Дата выдачи паспорта.
@@ -168,26 +136,29 @@ namespace ControlDantist.ValidateEsrnLibrary
             // Дата выдачи документа.
             string датаВыдачиDoc = string.Empty;
 
-            if (itemLibrary.Packecge.льготник.ДатаВыдачиПаспорта != null)
+            if(DateTime.Compare(itemLibrary.Packecge.льготник.ДатаВыдачиПаспорта.Date, datePerson.ДатаВыдачи.Date) == 0)
             {
-                датаВыдачиПаспорта = itemLibrary.Packecge.льготник.ДатаВыдачиПаспорта.ToShortDateString().Trim();
-            }
-
-            if (datePerson.ДатаВыдачи != null)
-            {
-                датаВыдачиDoc = datePerson.ДатаВыдачи.ToShortDateString().Trim();
-            }
-
-            // Сверим дату выдачи паспартов.
-            if (датаВыдачиПаспорта.ToLower().Trim() == датаВыдачиDoc.ToLower().Trim())
-            {
-                this.discriptionError.SetFlag(true, "");
+                itemLibrary.DiscriptionValidate.SetFlagPassword(true, "");
             }
             else
             {
-                this.discriptionError.SetFlag(false, " ДАТА ВЫДАЧИ ПАСПОРТА ");
+                itemLibrary.DiscriptionValidate.SetFlagPassword(false, " ДАТА ВЫДАЧИ ПАСПОРТА ");
             }
 
+        }
+
+        public void ValidSecondName(ItemLibrary itemLibrary, DatePerson datePerson)
+        {
+            //// Сравним данные по Фамилии.
+            if (itemLibrary.Packecge.льготник?.Отчество.ToLower().Trim() == datePerson.Отчество.ToLower().Trim())
+            {
+                // Если данные совподают тогда
+                itemLibrary.DiscriptionValidate.SetFlag(true, "");
+            }
+            else
+            {
+                itemLibrary.DiscriptionValidate.SetFlag(false, " Ошибка Отчество; ");
+            }
         }
     }
 }

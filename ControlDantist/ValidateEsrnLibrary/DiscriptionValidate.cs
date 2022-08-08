@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControlDantist.DataBaseContext;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,31 @@ namespace ControlDantist.ValidateEsrnLibrary
     /// </summary>
     public class DiscriptionValidate
     {
-        List<bool> listFlagError; // = new List<bool>();
-        List<string> listTextError; // = new List<string>();
+        /// <summary>
+        /// Флаг указывающий что льготник прошел проверку.
+        /// </summary>
+        public bool FlagErrorValidate { get; set; }
+
+        // Строка для хранения описания ошибки.
+        private StringBuilder descriptionError;
+
+        // Список логических отметок с результатами проверок.
+        List<bool> listFlagError;
+
+        // Список логических отметок с результатами проверок по паспорту.
+        List<bool> listFlagErrorPassword;
+
+       // private ItemLibrary person;
 
         public DiscriptionValidate()
         {
             listFlagError = new List<bool>();
-            listTextError = new List<string>();
+
+            listFlagErrorPassword = new List<bool>();
+
+            descriptionError = new StringBuilder();
+
+           // person = person;
         }
 
         /// <summary>
@@ -24,40 +43,99 @@ namespace ControlDantist.ValidateEsrnLibrary
         /// </summary>
         /// <param name="flag">Булевое значение ошибки есть False, нет True</param>
         /// <param name="message">Описание ошибки</param>
-        public void SetFlag(bool flag,string message)
+        public void SetFlag(bool flag, string message)
         {
             listFlagError.Add(flag);
 
             if (flag == false)
             {
-                listTextError.Add(message);
+                descriptionError.Append(message);
             }
         }
 
         /// <summary>
-        /// Возвращает список флагов с результатами работы.
+        /// Устанавливает значения после проверки паспорта.
+        /// </summary>
+        /// <param name="flag">Булевое значение ошибки есть False, нет True</param>
+        /// <param name="message">Описание ошибки</param>
+        public void SetFlagPassword(bool flag, string message)
+        {
+            listFlagErrorPassword.Add(flag);
+
+            if (flag == false)
+            {
+                descriptionError.Append(message);
+            }
+        }
+
+        /// <summary>
+        /// Возвращает результтат проверки по Фио и докуменам.
         /// </summary>
         /// <returns>Список с логическими значениями</returns>
-        public List<bool> GetFlag()
+        public bool GetFlag()
         {
-            return this.listFlagError;
+            int i = 0;
+
+            bool flagResult = false;
+
+            foreach (bool flag in listFlagError)
+            {
+                if (flag == true)
+                {
+                    i++;
+                }
+            }
+
+            if (listFlagError.Count == i)
+            {
+                flagResult = true;
+            }
+
+            return flagResult;
         }
 
         /// <summary>
-        /// Строку с описанием ошибок
+        /// Возвращает результат проверки паспорта.
         /// </summary>
-        /// <returns>Список текстовых сообщений.</returns>
-        public string GetErrorMessage()
+        /// <returns></returns>
+        public bool GetFlagPassword()
         {
-            StringBuilder builder = new StringBuilder();
+            int i = 0;
 
-            foreach(string str in listTextError)
+            bool flagResult = false;
+
+            foreach (bool flag in listFlagErrorPassword)
             {
-                builder.Append(str + " ");
+                if (flag == true)
+                {
+                    i++;
+                }
             }
 
-            return builder.ToString().Trim();
+            if (listFlagError.Count == i)
+            {
+                flagResult = true;
+            }
+
+            return flagResult;
         }
 
+        /// <summary>
+        /// Возвращает описание ошибки.
+        /// </summary>
+        /// <returns></returns>
+        public string DescriptionError()
+        {
+            return this.descriptionError.ToString();
+        }
+
+        /// <summary>
+        /// Для теста потом убрать.
+        /// </summary>
+        /// <returns></returns>
+        public int CountListFlagErrorTrue()
+        {
+            return listFlagError.Count;
+        }
     }
 }

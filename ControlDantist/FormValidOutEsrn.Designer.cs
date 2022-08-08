@@ -57,6 +57,8 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.label3 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lblText = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataError)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -132,7 +134,7 @@
             this.groupBox3.Controls.Add(this.btnCheck);
             this.groupBox3.Controls.Add(this.button3);
             this.groupBox3.Controls.Add(this.button2);
-            this.groupBox3.Location = new System.Drawing.Point(19, 552);
+            this.groupBox3.Location = new System.Drawing.Point(13, 594);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(388, 44);
             this.groupBox3.TabIndex = 30;
@@ -163,7 +165,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(638, 557);
+            this.button1.Location = new System.Drawing.Point(638, 609);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(121, 23);
             this.button1.TabIndex = 27;
@@ -180,7 +182,7 @@
             this.dataError.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataError.Location = new System.Drawing.Point(6, 20);
             this.dataError.Name = "dataError";
-            this.dataError.Size = new System.Drawing.Size(376, 174);
+            this.dataError.Size = new System.Drawing.Size(376, 178);
             this.dataError.TabIndex = 0;
             // 
             // groupBox2
@@ -190,9 +192,9 @@
             this.groupBox2.Controls.Add(this.dataError);
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.groupBox2.Location = new System.Drawing.Point(452, 349);
+            this.groupBox2.Location = new System.Drawing.Point(452, 382);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(388, 201);
+            this.groupBox2.Size = new System.Drawing.Size(388, 205);
             this.groupBox2.TabIndex = 26;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Ошибочные данные";
@@ -206,12 +208,12 @@
             this.dataCorrect.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataCorrect.Location = new System.Drawing.Point(9, 21);
             this.dataCorrect.Name = "dataCorrect";
-            this.dataCorrect.Size = new System.Drawing.Size(418, 173);
+            this.dataCorrect.Size = new System.Drawing.Size(418, 177);
             this.dataCorrect.TabIndex = 0;
             // 
             // btnLK
             // 
-            this.btnLK.Location = new System.Drawing.Point(414, 567);
+            this.btnLK.Location = new System.Drawing.Point(407, 609);
             this.btnLK.Name = "btnLK";
             this.btnLK.Size = new System.Drawing.Size(85, 23);
             this.btnLK.TabIndex = 33;
@@ -226,9 +228,9 @@
             this.groupBox1.Controls.Add(this.dataCorrect);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox1.ForeColor = System.Drawing.Color.Green;
-            this.groupBox1.Location = new System.Drawing.Point(13, 349);
+            this.groupBox1.Location = new System.Drawing.Point(13, 382);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(433, 201);
+            this.groupBox1.Size = new System.Drawing.Size(433, 205);
             this.groupBox1.TabIndex = 25;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Верные данные";
@@ -294,7 +296,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(765, 557);
+            this.btnClose.Location = new System.Drawing.Point(765, 609);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 18;
@@ -342,7 +344,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(19, 324);
+            this.label3.Location = new System.Drawing.Point(16, 320);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(89, 13);
             this.label3.TabIndex = 24;
@@ -364,11 +366,32 @@
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             this.dataGridView1.Click += new System.EventHandler(this.dataGridView1_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(19, 344);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(88, 13);
+            this.label4.TabIndex = 36;
+            this.label4.Text = "Список ошибок:";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // lblText
+            // 
+            this.lblText.AutoSize = true;
+            this.lblText.ForeColor = System.Drawing.Color.Red;
+            this.lblText.Location = new System.Drawing.Point(142, 347);
+            this.lblText.Name = "lblText";
+            this.lblText.Size = new System.Drawing.Size(0, 13);
+            this.lblText.TabIndex = 37;
+            // 
             // FormValidOutEsrn
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(852, 601);
+            this.ClientSize = new System.Drawing.Size(852, 638);
+            this.Controls.Add(this.lblText);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.btnSum);
             this.Controls.Add(this.btnExel);
@@ -434,5 +457,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblText;
     }
 }

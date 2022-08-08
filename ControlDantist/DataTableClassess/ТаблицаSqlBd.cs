@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using System.Data.SqlClient;
+using ControlDantist.ErrorHandlid;
 
 namespace ControlDantist.DataTableClassess
 {
@@ -28,20 +29,33 @@ namespace ControlDantist.DataTableClassess
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                con.Open();
+                try
+                {
+                    con.Open();
 
-                SqlCommand com = new SqlCommand(query, con);
-                com.CommandTimeout = 0;
+                    SqlCommand com = new SqlCommand(query, con);
+                    com.CommandTimeout = 0;
 
-                //SqlDataAdapter da = new SqlDataAdapter(query, con);
-                SqlDataAdapter da = new SqlDataAdapter(com);
+                    //SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    SqlDataAdapter da = new SqlDataAdapter(com);
 
-                da.Fill(ds, nameTable);
-                con.Close();
+                    da.Fill(ds, nameTable);
+                    con.Close();
+
+                    return ds?.Tables[0];
+                }
+                catch(Exception ex)
+                {
+                    string paph = @"F:\!\111\ErrorFileESPB.txt";
+
+                    IWriteError writeError = new WriteErrorFileText(paph, ex.Message.Trim());
+
+                    //System.Windows.Forms.MessageBox.Show(ex.Message.Trim());
+
+                }
             }
 
-            return ds.Tables[0];
-
+            return null;
         }
     }
 }

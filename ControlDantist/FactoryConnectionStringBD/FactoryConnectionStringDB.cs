@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ConfigLibrary;
+
 
 namespace ControlDantist.FactoryConnectionStringBD
 {
@@ -12,7 +12,7 @@ namespace ControlDantist.FactoryConnectionStringBD
         /// Возвращает строки подключения к БД в районах бласти.
         /// </summary>
         /// <returns></returns>
-        public IConfig ConnectionStringDB()
+        public IConfigConnectionString ConnectionStringDB()
         {
             return new Config();
         }

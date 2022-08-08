@@ -162,6 +162,8 @@ namespace ControlDantist.Classes
                 //IWriteError writeErrorFileText = new WriteErrorFileText(writePatchRegion, sConnetion);
                 //writeErrorFileText.Write();
 
+                con.Close();
+
             }
 
             return ds.Tables[0]; 

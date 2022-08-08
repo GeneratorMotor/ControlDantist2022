@@ -43,8 +43,16 @@ using ControlDantist.FactorySqlQuery;
 using System.Configuration;
 using ControlDantist.ValididtyTicket;
 using ControlDantist.ValidateEsrnLibrary;
-
-
+using ControlDantist.FactoryConnectionStringBD;
+using ConfigLibrary;
+using ControlDantist.DataTableClassess;
+using ControlDantist.ClassesForFindEspb;
+using ControlDantist.ClassesForFindEspb.Factorys;
+using ControlDantist.ClassesForFindEspb.ItemEspbPerson;
+using ControlDantist.FactoryConnectionStringBD;
+using Config = ControlDantist.FactoryConnectionStringBD.Config;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ControlDantist
 {
@@ -90,15 +98,25 @@ namespace ControlDantist
         /// </summary>
         public bool FlagConnectServer { get; set; }
 
+        private FactoryConnectionStringDB factoryConnectionStringDB;
+
+        // Тоекен на отмену операции провекри по районам области.
+        private CancellationToken token;
+
+        // Класс отслеживающий отправку токену сигнал отмены.
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
         public MainForm()
         {
             InitializeComponent();
 
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
-            // Прочитаем кто пользователь системы.
+            // Фабрика строк полключения к БД ЭСРН в области.
+            factoryConnectionStringDB = new FactoryConnectionStringDB();
 
-
+            // Экземпляр токена на отмену проверки.
+            token = cancellationTokenSource.Token;
         }
 
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4330,7 +4348,8 @@ namespace ControlDantist
             findLettert.Show();
         }
 
-        private void проверкаToolStripMenuItem_Click(object sender, EventArgs e)
+        //private void проверкаToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void проверкаToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Переменная для хранения имени файла.
             string fileName = string.Empty;
@@ -4357,23 +4376,20 @@ namespace ControlDantist
             {
                 // Получили имя класса.
                     fileName = openFileDialog1.FileName;
-
-                //try
-                //{
-
+                try
+                {
                     using (FileStream fstream = File.Open(fileName, FileMode.Open))
                     {
                         BinaryFormatter binaryFormatter = new BinaryFormatter();
-
                         // Получим из файла словарь с договорами.
                         unload = (Dictionary<string, Unload>)binaryFormatter.Deserialize(fstream);
                     }
-                //}
-                //catch
-                //{
-                //    MessageBox.Show("Файл не является реестром проекта договоров", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //    return;
-                //}
+                }
+                catch
+                {
+                    MessageBox.Show("Файл не является реестром проекта договоров", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 // Список проектов договоров отображаемых в письме.
                 List<DisplayContract> listContracts = new List<DisplayContract>();
@@ -4540,30 +4556,44 @@ namespace ControlDantist
                     {
                         MessageBox.Show("Файл реестра проектов договоров не переименован", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
-                    //// Выведим список совподений договров на бумагу в Word.
-                    //WordReport wordPrint = new WordReport(listDoc);
-
-                    //DocPrint docPrint = new DocPrint(wordPrint);
-                    //docPrint.Execute();
                 }
-
-                var asdTest = "";
 
                 // Если список договров больше 0 тогда проводим проверку в ЭСРН.
                 if (listDoc != null && listDoc.Count > 0)
                 {
 
-                    //DialogResult result = MessageBox.Show("Начать проверку проектов договоров", "Внимание", MessageBoxButtons.OKCancel);
+                    // // Получим стркои поюдключения к БД ЭСРН в районах области.
+                    // IConfigConnectionString configConnectionString = factoryConnectionStringDB.ConnectionStringDB();
 
-                    //if (result == DialogResult.OK)
-                    //{
-                        // Осуществляем проверку договров по БД ЭСРН.
-                        EsrnPersonValidate esrnPersonValidate = new EsrnPersonValidate(packegeDateContract);
-                        esrnPersonValidate.Validate();
+                    //// Осуществляем проверку договров по БД ЭСРН.
+                    // EsrnPersonValidate esrnPersonValidate = new EsrnPersonValidate(packegeDateContract, configConnectionString);
+                    // esrnPersonValidate.Validate();
 
-                        // Проверка договоров по ЭСРН.
-                        var itemResult = packegeDateContract;
+
+                    int countProgress = 0;
+
+                    // Установим характеристики прогресс бара.
+                    this.progressBar1.Minimum = 0; // по умолчанию
+                    this.progressBar1.Maximum = 44; //по умолчанию
+                                                    //    //                                //progressBar1.Value =0; //по умолчанию
+                    this.progressBar1.Step = 1; //
+
+                    var progress = new Progress<int>();
+
+                    progress.ProgressChanged += Progress_ProgressChanged1;
+
+                    // Выполним в асинхрном коде.
+                    await ValidateEsrnAsync(progress, packegeDateContract, token);
+
+                    if (token.IsCancellationRequested == true)
+                    {
+                        var asd = "";
+
+                        MessageBox.Show("Отмена произошла");
+                        this.progressBar1.Value = 0;
+                    }
+
+                    SetMack(packegeDateContract);
 
                         // Подключимся к нашей БД.
                         using (DContext dc = new DContext(ConnectDB.ConnectionString()))
@@ -4579,11 +4609,18 @@ namespace ControlDantist
 
                             // Выполним сравнение услуг в договре с услугам записанными на нашем сервере.
                             validateMedServis.ValidateServices();
-
                         }
 
                         // Отобразим результат проверки.
                         FormValidOutEsrn formValid = new FormValidOutEsrn(packegeDateContract);
+
+                    var testUnload = unload;
+
+                    foreach(var asd in testUnload)
+                    {
+                        var asdasd = asd;
+                    }
+
 
                         // Подгрузим в форму библиотеку договоров.
                         formValid.ВыгрузкаПроектДоговоров = unload;
@@ -4597,6 +4634,43 @@ namespace ControlDantist
 
             }
 
+        }
+
+        private void Progress_ProgressChanged1(object sender, int e)
+        {
+            //вызываем метод для увеличения шкалы progressBar.
+            progressBar1.PerformStep();
+        }
+
+        // Асинхронный метод.
+        private async System.Threading.Tasks.Task ValidateEsrnAsync(Progress<int> progress, List<ItemLibrary> packegeDateContract, CancellationToken token)
+        {
+            await System.Threading.Tasks.Task.Run(() => ValidateAsync(progress, packegeDateContract, token));
+            //return await 
+        }
+
+        private void ValidateAsync(Progress<int> progress, List<ItemLibrary> packegeDateContract, CancellationToken token)
+        {
+            // Получим стркои поюдключения к БД ЭСРН в районах области.
+            IConfigConnectionString configConnectionString = factoryConnectionStringDB.ConnectionStringDB();
+
+           // Осуществляем проверку договров по БД ЭСРН.
+            EsrnPersonValidate esrnPersonValidate = new EsrnPersonValidate(packegeDateContract, configConnectionString, token);
+            esrnPersonValidate.Validate(progress);
+
+            
+        }
+
+
+
+        // Помечаем льготников у которых данные не совпали с данными из ЭСРН.
+        private void SetMack(List<ItemLibrary> listPerson)
+        {
+            foreach(var item in listPerson.Where(w=>w.FlagValidateEsrn ==  false))
+            {
+                MarckPackageProgectContract marck = new MarckPackageProgectContract(item);
+                marck.SetMarck();
+            }
         }
 
         private void остаткиЛБОToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5899,16 +5973,28 @@ namespace ControlDantist
 
         private void проверкаБилетовМинистерствоToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Читаем из файла номера билетов.
-            List<string> listBarCode = new List<string>();
+            string sCon = "Data Source=10.159.102.21;Initial Catalog=espb;User ID=sa;Password=sitex";
 
-            listBarCode.Add("8833005");
+            string strConnectWriteBarCode = "Data Source=10.159.102.21;Initial Catalog=НалоговаяЗапросБилеты;User ID=sa;Password=sitex";
+
+            //// Читаем из файла номера билетов.
+            ////List<string> listBarCode = new List<string>();
+
+            //// Sql скрипт на чтение DAR_COD из БД.
+            IQuery barCode = new QueryBarCode();
+            string stringBarCode = barCode.Query();
+
+            // Получим список с BAR_CODE/
+            GetListDb getListBarCode = new GetListDb(stringBarCode, strConnectWriteBarCode);
+
+            List<string> listBarCode = getListBarCode.GetList();
+
+            ////listBarCode.Add("8833005");
 
             // Фабрика для получения данных из ЕСПБ.
             FactorySqlQueryTicket factorySqlQueryTicket = new FactorySqlQueryTicket();
 
             BuilderQueryFindTicketEspb queryFindTicketEspb = new BuilderQueryFindTicketEspb(factorySqlQueryTicket, "#tab2", listBarCode);
-            //queryFindTicketEspb.CreateTempTable()
 
             // Переменная для хранения значений PC_GUID льготниклов которые купили билет.
             DataTable tabPC_GUID;
@@ -5916,74 +6002,425 @@ namespace ControlDantist
             ControlBuilderQueryFindTicket controlBuilderTiket = new ControlBuilderQueryFindTicket(queryFindTicketEspb);
             string builderEsrnTicket = controlBuilderTiket.CreateBuilder();
 
-            string sCon = "Data Source=10.159.102.21;Initial Catalog=espb;User ID=sa;Password=sitex";
 
-            using (SqlConnection con = new SqlConnection(sCon))
+
+            //// Переменная для хранения SQL инструкции для записи в БД данных по билетам из ЕСПБ.
+            //string insertTest = string.Empty;
+
+            //using (SqlConnection con = new SqlConnection(sCon))
+            //{
+            //    try
+            //    {
+            //        // Получим льготников найденных в ЭСРН по ФИО и документам дающим право на получение льгот.
+            //        DataTable tabФИО = ТаблицаБД.GetTableSQL(builderEsrnTicket, "БилетыЕспб", con);
+
+            //        if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
+            //        {
+            //            IQuery insertDateEspb = new InsertDateEspb(tabФИО);
+            //            insertTest = insertDateEspb.Query();
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show(ex.Message);
+            //    }
+            //}
+
+            //using (SqlConnection con = new SqlConnection(strConnectWriteBarCode))
+            //{
+            //    try
+            //    {
+            //        con.Open();
+
+            //        // Запишем данные из ЕСПБ в таблицу DateEspb базы данных НалоговаяЗапросБилеты.
+            //        SqlCommand com = new SqlCommand(insertTest, con);
+
+            //        com.CommandTimeout = 0;
+
+            //        com.ExecuteNonQuery();
+            //    }
+            //    catch(Exception ex)
+            //    {
+            //        MessageBox.Show(ex.Message);
+            //    }
+            //}
+
+            MessageBox.Show("Базу Еспб прочитали, переходим к ЭСРН.");
+
+            //// Список GUID персональных карточек льготников.
+            //List<string> listPC_GUID = new List<string>();
+
+            IQuery pcGuid = new QueryPC_GUID();
+            string strpcGuid = pcGuid.Query();
+
+            GetListDb getListPcGuid = new GetListDb(strpcGuid, strConnectWriteBarCode);
+            List<string> listPC_GUID = getListPcGuid.GetList();
+
+            // Фабрика для получения данных из ЕСПБ.
+            ФабрикаSQLЭсрн factorySqlQueryЭсрн = new ФабрикаSQLЭсрн();
+            BuilderQueryFindЭСРН queryFindTicketЭсрн = new BuilderQueryFindЭСРН(factorySqlQueryЭсрн, "#tabЭсрн2", listPC_GUID);
+
+            ControlBuilderQueryFindTicket controlBuilderЭсрн = new ControlBuilderQueryFindTicket(queryFindTicketЭсрн);
+
+            // SQL запрос на получение данных из ЭСРН.
+            string builderEsrnЭсрн = controlBuilderЭсрн.CreateBuilder();
+
+            // Фабрика подключения к районам.
+            FactoryConnectionStringDB factoryConnection = new FactoryConnectionStringDB();
+
+            // Получим строки подключения к БД в районах области.
+            IConfigConnectionString pullConnection = factoryConnection.ConnectionStringDB();
+
+            Mutex mutexObj = new Mutex();
+
+            // Пройдемся по строкам подключения.
+            foreach (KeyValuePair<string, string> dStringConnect in pullConnection.Select())
             {
-                try
+                mutexObj.WaitOne();
+
+                // Для теста.
+                string sKey = string.Empty;
+                sKey = dStringConnect.Key.Trim();
+
+                // TODO: Отключем проверку договоров.
+                // Отключим проверку по ЭСРН.
+                //continue;
+
+                //// TODO: Отключим районы.
+                //////Оставим участок кода для отработки быстроого подключения
+                /////// К нужному району.
+                //if (sKey.Trim() != "Вольский".Trim())
+                //{
+
+                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                //    continue;
+                //}
+                //else
+                //{
+                //    var testConnecrt = "Ленинский";
+                //}
+
+                // Переменная хранит строку подключения к БД.
+                string sConnection = string.Empty;
+                sConnection = dStringConnect.Value.ToString().Trim();
+
+
+                bool isConnected = false;
+
+                //Выполним проверку в единой транзакции для конкретного района (строки подключения)
+                using (SqlConnection con = new SqlConnection(sConnection))
                 {
-                    // Получим льготников найденных в ЭСРН по ФИО и документам дающим право на получение льгот.
-                    DataTable tabФИО = ТаблицаБД.GetTableSQL(builderEsrnTicket, "БилетыЕспб", con);
-
-                    if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
+                    try
                     {
-                        // Скопируем данные в переменную.
-                        tabPC_GUID = tabФИО;
-
-                        IQuery insertDateEspb = new InsertDateEspb(tabФИО);
-                        string insertTest = insertDateEspb.Query();
-
+                        // ПОдключемся к БД.
                         con.Open();
+                    }
+                    catch
+                    {
+                        System.Windows.Forms.MessageBox.Show("Сервер в районе " + dStringConnect.Key + " в настоящий момент не доступен.");
+                        continue;
+                    }
 
-                        // Запишем данные из ЕСПБ в таблицу DateEspb базы данных НалоговаяЗапросБилеты.
-                        SqlCommand com = new SqlCommand(insertTest, con);
-                        com.ExecuteNonQuery();
+                    // Переменная для хранения льготной категории.
+                    string cateroryPerson = string.Empty;
+                    // Переменная дя хранения строки запроса.
+                    string queryФИО = string.Empty;
+
+                    //// Воспользуемся Фабрикой с паттерном Builder.
+                    //IBuilderTempTable builderTempTable = new BuilderQueryFindPerson(factorySqlQuery, "#t2_temp", this.list);
+
+                    //// Сформируем SQL запрос к БД на поиск льготника по ФИО и по номеру документа.
+                    //ControlBuilderQueryFindPerson controlBuilderQueryFindPerson = new ControlBuilderQueryFindPerson(builderTempTable);
+                    //queryФИО = controlBuilderQueryFindPerson.CreateBuilder();
+
+                    // Объявление начала транзакции.
+                    SqlTransaction sqlTransaction = con.BeginTransaction();
+
+                    // Получим льготников найденных в ЭСРН по ФИО и документам дающим право на получение льгот.
+                    DataTable tabPcGuid = ТаблицаБД.GetTableSQL(builderEsrnЭсрн, "PsGuid", con, sqlTransaction);
+
+                    if (tabPcGuid != null && tabPcGuid.Rows != null && tabPcGuid.Rows.Count > 0)
+                    {
+
+
+                        IQuery insertNalog = new InsertQueryPcGuid(tabPcGuid);
+                        string queryInsertNalog = insertNalog.Query();
+
+                        using (SqlConnection conNalog = new SqlConnection(strConnectWriteBarCode))
+                        {
+                            //try
+                            //{
+                                conNalog.Open();
+
+                            
+
+                                // Запишем данные из ЕСПБ в таблицу DateEspb базы данных НалоговаяЗапросБилеты.
+                                SqlCommand com = new SqlCommand(queryInsertNalog, conNalog);
+
+                                com.CommandTimeout = 0;
+
+                                com.ExecuteNonQuery();
+                            //}
+                            //catch (Exception ex)
+                            //{
+                            //    MessageBox.Show(ex.Message);
+                            //}
+                        }
 
                     }
 
-                }
-                catch(Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
-                MessageBox.Show("Базу Еспб прочитали, переходим к ЭСРН.");
-
-                
-
-
-
-                if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
-                {
-
-                   
-
-                    string iTestInsert = "";
-
-
-                    // Сконвертируем данные из таблицв в список.
-                    IConvertor<DatePerson> convertor = new ConvertDTableToList(tabФИО);
-
-                    List<DatePerson> listDate = convertor.ConvertDate();
-
-                    //// Проверим есть ли записи в результате выгрузки из ЭСРН.
-                    //if (listDate.Count > 0)
-                    //{
-                    //    // Проведем проверку данных по льготникам.
-                    //    IValidateЭсрн validateЭсрн = new ПроверкаЭсрн(listDate, this.list);
-                    //    validateЭсрн.Validate();
-                    //}
 
                 }
+
             }
 
-               
-
-            
-
-            string iTest = "";
+            MessageBox.Show("Все районы прошли запис завершена");
+                    //===============
 
 
+        }
+
+        private void выгрузкаМинистерствоЕСПБToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Сформируем SQL запрос.
+            //IQuery query = new SqlEspbQuery();
+            IQuery query = new SqlQueryDatePersonEspb();
+            string queryEspb = query.Query();
+
+            string sConnection = "Data Source=10.159.102.21;Initial Catalog=espb;User ID=sa;Password=sitex";
+
+            string sConnectionTestDB = "Data Source=10.159.102.21;Initial Catalog=ConnectionStringsDirectory;User ID=sa;Password=sitex";
+
+            // Получим Дату
+            ТаблицаSqlBd таблицаSqlBd = new ТаблицаSqlBd(sConnection, queryEspb, "ТаблицаЕспб");
+            DataTable tabEspb = таблицаSqlBd.GetTableSQL();
+
+            // Сконвертируем DataTable в List DatePersonEspb.
+            var list = tabEspb.Rows.OfType<DataRow>().Select(w => new DataPersonEspb { PC_Guid = w.Field<string>("PC_Guid"), ДатаДокумента = w.Field<DateTime>("ДатаДокумента"), Категория = w.Field<string>("Категория"), СерияДокумента = w.Field<string>("СерияДокумента"), НомерДокумента = w.Field<string>("НомерДокумента"), НазваниеДокумента = w.Field<string>("НазваниеДокумента") }).ToList();
+
+            // Фабрика запросов на получение данных из ЭСРН по льготникам у которых отсутствует СНИЛС в базе ЕСПБ.
+            IBuilderTempTable builderTempTable = new BuilderSqlQueryFindPerson(new FactoryEspbEsrn(), "#temp2", list);
+
+            // Сформируем SQL запрос к БД на поиск льготника по ФИО и по номеру документа.
+            ControlBuilderQueryFindPerson controlBuilderQueryFindPerson = new ControlBuilderQueryFindPerson(builderTempTable);
+            string queryEsrn = controlBuilderQueryFindPerson.CreateBuilder();
+
+            // Фабрика подключения к БД ЭСРН.
+            //FactoryConnectionStringDB factoryConnection = new FactoryConnectionStringDB();
+
+            //// Пройдемся по районам области.
+            //// Получим строки подключения к БД в районах области.
+            //Config pullConnection = factoryConnection.ConnectionStringDB();
+
+            Config myConfig = new Config();
+
+            var asd = myConfig.Select();
+
+            Mutex mutexObj = new Mutex();
+
+            // Пройдемся по строкам подключения.
+            foreach (KeyValuePair<string, string> dStringConnect in myConfig.Select().OrderBy(w=>w.Key))
+            {
+                mutexObj.WaitOne();
+
+                //if(dStringConnect.Key.Trim().ToLower() == "Балаковский".ToLower().Trim())
+                //{
+                //    string iTest = "";
+                //}
+
+                ////// TODO: Отключим районы.
+                ////////Оставим участок кода для отработки быстроого подключения
+                ///////// К нужному району.
+                //if (dStringConnect.Key.Trim() == "Фёдоровский".Trim())
+                //{
+                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                //    break;
+                //    //continue;
+                //}
+                //if (dStringConnect.Key.Trim() == "Волжский".Trim())
+                //{
+                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                //    //beak;
+                //    //continue;
+
+                //    var test = "";
+                //}
+
+                // Получим Дату
+                ТаблицаSqlBd таблицаЭСРН = new ТаблицаSqlBd(dStringConnect.Value, queryEsrn, "ТаблицаЭсрн");
+
+                DataTable tabEsrn = таблицаЭСРН.GetTableSQL();
+
+                if (tabEsrn != null && tabEsrn.Rows != null && tabEsrn.Rows.Count > 0)
+                {
+
+                    // Запишем в БД.
+                    string queryInsert = WriteTabEspbEsrn(tabEsrn, dStringConnect.Key);
+
+                    // Выполняем инструкцию.
+                    ExecuteQuery.Execute(queryInsert, sConnectionTestDB);
+                }
+
+                mutexObj.ReleaseMutex();
+            }
+
+            MessageBox.Show("Запись завершена");
+
+        }
+
+        private string WriteTabEspbEsrn(DataTable tabEsrn, string region)
+        {
+            // Переменная для хранения скрипта на запись в БД.
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach(DataRow row in tabEsrn.Rows)
+            {
+
+                // НАРУШИЛ SOLID.
+                string psGuid = string.Empty;
+                string СерияДокумента = string.Empty;
+                string НомерДокумента = string.Empty;
+                string НазваниеДокумента = string.Empty;
+                DateTime ДатаДокумента;
+                string Категория = string.Empty;
+                string Фамилия = string.Empty;
+                string Имя = string.Empty;
+                string Отчество = string.Empty;
+                DateTime ДатаРождения;
+                string Адрес = string.Empty;
+                string Район = string.Empty;
+
+                if (!DBNull.Value.Equals(row["GUID"]))
+                {
+                    psGuid = row["GUID"].ToString();
+                }
+                else
+                {
+                    psGuid = "";
+                }
+
+                if (!DBNull.Value.Equals(row["СерияДокумента"]))
+                {
+                    СерияДокумента = row["СерияДокумента"].ToString();
+                }
+                else
+                {
+                    СерияДокумента = "";
+                }
+
+                if (!DBNull.Value.Equals(row["НомерДокумента"]))
+                {
+                    НомерДокумента = row["НомерДокумента"].ToString();
+                }
+                else
+                {
+                    НомерДокумента = "";
+                }
+
+                // Проверка название документа.
+                if (!DBNull.Value.Equals(row["НазваниеДокумента"]))
+                {
+                    НазваниеДокумента = row["НазваниеДокумента"].ToString();
+                }
+                else
+                {
+                    НазваниеДокумента = "";
+                }
+
+                // ДатаДокумента.
+                if (!DBNull.Value.Equals(row["ДатаДокумента"]))
+                {
+                    ДатаДокумента = Convert.ToDateTime(row["ДатаДокумента"]);
+                }
+                else
+                {
+                    DateTime dt = new DateTime(1900, 1, 1);
+                    ДатаДокумента = dt;
+                }
+
+                // Категория.
+                if (!DBNull.Value.Equals(row["Категория"]))
+                {
+                    Категория = row["Категория"].ToString();
+                }
+                else
+                {
+                    Категория = "";
+                }
+
+                // Фамилия.
+                if (!DBNull.Value.Equals(row["Фамилия"]))
+                {
+                    Фамилия = row["Фамилия"].ToString();
+                }
+                else
+                {
+                    Фамилия = "";
+                }
+
+                // Имя.
+                if (!DBNull.Value.Equals(row["Имя"]))
+                {
+                    Имя = row["Имя"].ToString();
+                }
+                else
+                {
+                    Имя = "";
+                }
+
+                // Отчество.
+                if (!DBNull.Value.Equals(row["Отчество"]))
+                {
+                    Отчество = row["Отчество"].ToString();
+                }
+                else
+                {
+                    Отчество = "";
+                }
+
+                // Дата рождения.
+                if (!DBNull.Value.Equals(row["ДатаРождения"]))
+                {
+                    ДатаРождения = Convert.ToDateTime(row["ДатаРождения"]);
+                }
+                else
+                {
+                    DateTime dt = new DateTime(1900, 1, 1);
+                    ДатаРождения = dt;
+                }
+
+                // Адрес.
+                if (!DBNull.Value.Equals(row["Адрес"]))
+                {
+                    Адрес = row["Адрес"].ToString();
+                }
+                else
+                {
+                    Адрес = "";
+                }
+
+                // Район.
+                //if (!DBNull.Value.Equals(row["Район"]))
+                //{
+                //    Район = row["Район"].ToString();
+                //}
+                //else
+                //{
+                //    Район = "";
+                //}
+
+                IQuery queryInsert = new QueryInsertResultat(psGuid, СерияДокумента, НомерДокумента, НазваниеДокумента, ДатаДокумента, Категория, Фамилия, Имя, Отчество, ДатаРождения, Адрес, region);
+                stringBuilder.Append(queryInsert.Query());
+
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Завершим работу задачи.
+            cancellationTokenSource.Cancel();
         }
     }
 }

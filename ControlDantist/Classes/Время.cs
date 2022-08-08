@@ -38,6 +38,8 @@ namespace ControlDantist.Classes
             //var testDate2 = date.Date.ToLocalTime();
 
             return date.ToLocalTime().Date;
+
+            //return date.ToLocalTime().Date;
         }
 
     }

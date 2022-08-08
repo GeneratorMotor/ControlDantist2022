@@ -52,9 +52,6 @@ namespace ControlDantist.DisplayRegistr
         /// </summary>
         private void ConvertRegistr()
         {
-            //List<ResultValidEsrnDisplay> list = new List<ResultValidEsrnDisplay>();
-
-            //foreach (var itm in dictionary.Values)
             foreach(var itm in this.listProjectContrats)
             {
                 ResultValidEsrnDisplay r = new ResultValidEsrnDisplay();

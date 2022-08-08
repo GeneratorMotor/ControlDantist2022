@@ -50,17 +50,6 @@ namespace ControlDantist
         public int IdFileRegistr { get; set; }
 
         public Dictionary<string, Unload> ВыгрузкаПроектДоговоров { get; set; }
-        //{
-        //    get
-        //    {
-        //        return unload;
-        //    }
-        //    set
-        //    {
-        //        unload = value;
-        //    }
-        //}
-
 
         public FormValidOutEsrn(Dictionary<string, PersonValidEsrn> dictionary, string инн)
         {
@@ -134,12 +123,17 @@ namespace ControlDantist
             this.txtЛьготник.Text = "";
             this.txtАдрес.Text = "";
             this.txtДокумент.Text = "";
+            this.lblText.Text = "";
 
             // Отображать данные по льготнику будем только у прошедших проверку.
             DataGridViewRow row = this.dataGridView1.CurrentRow;
 
             // ПОлучим id договора.
             int idContract = Convert.ToInt32(row.Cells["IdContract"].Value);
+
+            // ПОлучим сообщение об ошибке.
+            var packet = this.listProjectContrats.Where(w => w.Packecge.тДоговор.id_договор == idContract).FirstOrDefault();
+            this.lblText.Text =  packet.DiscriptionValidate.DescriptionError();
 
             // Номер договора.
             string numContract = row.Cells["НомерДоговора"].Value.ToString();
@@ -561,8 +555,8 @@ namespace ControlDantist
                 using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.Serializable }))
                 {
 
-                    try
-                    {
+                    //try
+                    //{
                         // Проходимся по списку договоров.
                         foreach (var itm in this.listProjectContrats)
                         {
@@ -739,14 +733,14 @@ namespace ControlDantist
                     // TODO: Запись не произволдиться, закомментировано сохранение транзакции.
                     // Завершшим транзакцию.
                     scope.Complete();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Откатим транзакцию.
-                        scope.Dispose();
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    // Откатим транзакцию.
+                    //    scope.Dispose();
 
-                        MessageBox.Show("Ошибка в записи - " + ex.Message);
-                    }
+                    //    MessageBox.Show("Ошибка в записи - " + ex.Message);
+                    //}
 
                 }
 
@@ -831,6 +825,11 @@ namespace ControlDantist
         }
 
         private void btnLK_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
         {
 
         }

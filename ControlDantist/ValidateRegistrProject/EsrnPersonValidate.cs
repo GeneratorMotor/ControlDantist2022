@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using ControlDantist.Classes;
@@ -8,6 +9,7 @@ using ConfigLibrary;
 using ControlDantist.FactoryConnectionStringBD;
 using ControlDantist.FactoryClass;
 using ControlDantist.ValidateEsrnLibrary;
+using Config = ControlDantist.FactoryConnectionStringBD.Config;
 
 namespace ControlDantist.ValidateRegistrProject
 {
@@ -32,11 +34,27 @@ namespace ControlDantist.ValidateRegistrProject
         private IBuilderTempTable builderTempTablePassword;
 
         static Mutex mutexObj = new Mutex();
-        public EsrnPersonValidate(List<ItemLibrary> list)
+
+        private IConfigConnectionString configConnectionString;
+
+        private CancellationToken token;
+
+        //// Прогресс бар на выполнение процевсса проверки.
+        //System.Windows.Forms.ProgressBar progressBar;
+
+        //private Progress<int> progress;
+
+        /// <summary>
+        /// Сверка данных из реестра с данными из ЭСРН.
+        /// </summary>
+        /// <param name="list">Данные из реестра.</param>
+        public EsrnPersonValidate(List<ItemLibrary> list, IConfigConnectionString configConnectionString, CancellationToken token)
         {
             if (list != null && list.Count > 0)
             {
                 this.list = list;
+
+                this.configConnectionString = configConnectionString;
             }
             else
             {
@@ -50,21 +68,30 @@ namespace ControlDantist.ValidateRegistrProject
             factorySqlQuery = new FactorySqlQueryEsrnValidate();
 
             factoryPasswordSqlQuery = new FactorySqlQueryEsrnValidatePassword();
+
+            this.token = token;
+
         }
 
-        public void Validate()
+        public void Validate(IProgress<int> progress)
         {
-            // Получим строки подключения к БД в районах области.
-            IConfig pullConnection = factoryConnection.ConnectionStringDB();
 
-            // Пройдемся по строкам подключения.
-            foreach (KeyValuePair<string, string> dStringConnect in pullConnection.Select())
+            // Пройдемся по строкам подключения .
+            foreach (KeyValuePair<string, string> dStringConnect in this.configConnectionString.Select())
             {
+                // Заблокируем текущий поток.
                 mutexObj.WaitOne();
 
                 // Для теста.
                 string sKey = string.Empty;
                 sKey = dStringConnect.Key.Trim();
+
+
+                // Выход из проверки если пользователь запросил окончание проверки.
+                if(this.token.IsCancellationRequested == true)
+                {
+                    return;
+                }
 
                 // TODO: Отключем проверку договоров.
                 // Отключим проверку по ЭСРН.
@@ -73,24 +100,30 @@ namespace ControlDantist.ValidateRegistrProject
                 //// TODO: Отключим районы.
                 //////Оставим участок кода для отработки быстроого подключения
                 /////// К нужному району.
-                if (sKey.Trim() != "Ленинский".Trim())
-                {
-
-                    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
-                    var sTestTestt = "";
-                    continue;
-                }
-                //else
+                //if (sKey.Trim() != "Балаковский".Trim())
                 //{
-                //    var testConnecrt = "Ленинский";
+                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                //    continue;
+                //}
+
+                //if (sKey.Trim() != "Советский".Trim())
+                //{
+                //    Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                //    continue;
+                //}
+
+                //if (sKey.Trim() != "Вольский".Trim())
+                //{
+                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                //    continue;
                 //}
 
                 // Переменная хранит строку подключения к БД.
                 string sConnection = string.Empty;
                 sConnection = dStringConnect.Value.ToString().Trim();
 
-
-                bool isConnected = false;
+                // Переменная для хранения счетчика продвижения по району.
+                int countProgress = 0;
 
                 //Выполним проверку в единой транзакции для конкретного района (строки подключения)
                 using (SqlConnection con = new SqlConnection(sConnection))
@@ -99,15 +132,29 @@ namespace ControlDantist.ValidateRegistrProject
                     {
                         // ПОдключемся к БД.
                         con.Open();
+                      
                     }
                     catch
                     {
+                        // Счетчик прогресса.
+                        countProgress++;
+
+                        // Передадим значение счетчик прогресса.
+                        progress?.Report(countProgress);
+
                         System.Windows.Forms.MessageBox.Show("Сервер в районе " + dStringConnect.Key + " в настоящий момент не доступен.");
                         continue;
                     }
 
+                    // Счетчик прогресса.
+                    countProgress++;
+
+                    // Передадим значение счетчик прогресса.
+                    progress?.Report(countProgress);
+
                     // Переменная для хранения льготной категории.
                     string cateroryPerson = string.Empty;
+
                     // Переменная дя хранения строки запроса.
                     string queryФИО = string.Empty;
 
@@ -121,72 +168,38 @@ namespace ControlDantist.ValidateRegistrProject
                     // Объявление начала транзакции.
                     SqlTransaction sqlTransaction = con.BeginTransaction();
 
-                    // Получим льготников найденных в ЭСРН по ФИО и документам дающим право на получение льгот.
+                    // Данные по льготникам найденные в ЭСРН по ФИО и документам дающим право на получение льгот.
                     DataTable tabФИО = ТаблицаБД.GetTableSQL(queryФИО, "ФИО", con, sqlTransaction);
 
                     if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
                     {
-                        // Сконвертируем данные из таблицв в список.
+
+                        // Сконвертируем данные из таблицы в список.
                         IConvertor<DatePerson> convertor = new ConvertDTableToList(tabФИО);
 
+                        // Сконвертированные данные из таблицы в список по льготнику и документам льготника полученных из ЭСРН.
+                        
                         List<DatePerson> listDate = convertor.ConvertDate();
 
                         // Проверим есть ли записи в результате выгрузки из ЭСРН.
                         if(listDate.Count > 0)
                         {
-                            // Проведем проверку данных по льготникам.
+                            // Проведем сверку данных по льготникам из реесстра с данными полученными из ЭСРН.
                             IValidateЭсрн validateЭсрн = new ПроверкаЭсрн(listDate, this.list);
                             validateЭсрн.Validate();
                         }
 
+                        // Тест.
+                        var errorTest = this.list;
                     }
 
-
-                    string ads = "";
-
-                    // Пока закоментируем проверку по номеру документа.
-                    /*
-
-                    builderTempTablePassword = new BuilderQueryFindPerson(factoryPasswordSqlQuery, "#t3_temp", this.list);
-
-                    // Переменная дя хранения строки запроса.
-                    string queryФиоPassword = string.Empty;
-
-                    // Сформируем SQL запрос к БД на поиск льготника по ФИО и по номеру паспорта.
-                    ControlBuilderQueryFindPerson controlBuilderQueryFindPersonPassword = new ControlBuilderQueryFindPerson(builderTempTablePassword);
-                    queryФиоPassword = controlBuilderQueryFindPersonPassword.CreateBuilder();
-
-                    // Получим льготников найденных в ЭСРН по паспорту.
-                    DataTable tabФиоPassword = ТаблицаБД.GetTableSQL(queryФиоPassword, "ФиоPassword", con, sqlTransaction);
-
-                    */
-
-                    // Словарь для хранения id договоров которые прошли проверку.
-                    //Dictionary<int, int> idContracts = new Dictionary<int, int>();
-
-                    // Проверка список договоров.
-                    var listEsrnPerson = this.list;
-
-                    string iTest = "test";
-
-                    /*
-
-                    // Пометим прошедших проверку.
-                    //if (tabФИО?.Rows?.Count > 1 && tabФиоPassword?.Rows?.Count > 1)
-                    if (tabФИО?.Rows?.Count >=1 || tabФиоPassword?.Rows?.Count >= 1)
-                    { 
-                        // Пометим прошедших проверку.
-                        CompareRegistr compareRegistr = new CompareRegistr(this.list);
-                        compareRegistr.Compare(tabФИО, tabФиоPassword);
-                    }
-
-                    */
-                    
                 }
 
                 mutexObj.ReleaseMutex();
 
             }
+
+            var asdTest = this.list;
         }
 
         

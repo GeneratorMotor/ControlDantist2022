@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ControlDantist.ValidateEsrnLibrary;
 
 namespace ControlDantist.DataBaseContext
 {
@@ -56,6 +57,16 @@ namespace ControlDantist.DataBaseContext
         /// Флаг найденный ранее контракт.
         /// </summary>
         public bool FlagFoundLetter { get; set; }
+
+        /// <summary>
+        /// Описание результата проверки в случае ошибки.
+        /// </summary>
+        public DiscriptionValidate DiscriptionValidate{ get; set; }
+
+        /// <summary>
+        /// Список c булевым значением проверки всех имеющихся документов у льготника в ЭСРН.
+        /// </summary>
+        public List<bool> ListFalagValidateDocuments { get; set; }
 
     }
 }

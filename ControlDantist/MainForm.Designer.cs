@@ -44,6 +44,8 @@ namespace ControlDantist
             this.остаткиЛБОToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.сЧЕТАФАКТУРЫToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.уУстраняемКасякСАктамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.проверкаБилетовМинистерствоToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.выгрузкаМинистерствоЕСПБToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.стоматологическиеУслугиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.загрузитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.конвертерToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,8 +99,11 @@ namespace ControlDantist
             this.районыОбластиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.провестиПроверкуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.поискУчастиниковВОВToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.проверкаБилетовМинистерствоToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -134,7 +139,8 @@ namespace ControlDantist
             this.остаткиЛБОToolStripMenuItem,
             this.сЧЕТАФАКТУРЫToolStripMenuItem,
             this.уУстраняемКасякСАктамиToolStripMenuItem,
-            this.проверкаБилетовМинистерствоToolStripMenuItem});
+            this.проверкаБилетовМинистерствоToolStripMenuItem,
+            this.выгрузкаМинистерствоЕСПБToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.файлToolStripMenuItem.Text = "Файл";
@@ -249,6 +255,20 @@ namespace ControlDantist
             this.уУстраняемКасякСАктамиToolStripMenuItem.Text = "уУстраняем касяк с Актами";
             this.уУстраняемКасякСАктамиToolStripMenuItem.Visible = false;
             this.уУстраняемКасякСАктамиToolStripMenuItem.Click += new System.EventHandler(this.уУстраняемКасякСАктамиToolStripMenuItem_Click);
+            // 
+            // проверкаБилетовМинистерствоToolStripMenuItem
+            // 
+            this.проверкаБилетовМинистерствоToolStripMenuItem.Name = "проверкаБилетовМинистерствоToolStripMenuItem";
+            this.проверкаБилетовМинистерствоToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
+            this.проверкаБилетовМинистерствоToolStripMenuItem.Text = "Проверка билетов Министерство";
+            this.проверкаБилетовМинистерствоToolStripMenuItem.Click += new System.EventHandler(this.проверкаБилетовМинистерствоToolStripMenuItem_Click);
+            // 
+            // выгрузкаМинистерствоЕСПБToolStripMenuItem
+            // 
+            this.выгрузкаМинистерствоЕСПБToolStripMenuItem.Name = "выгрузкаМинистерствоЕСПБToolStripMenuItem";
+            this.выгрузкаМинистерствоЕСПБToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
+            this.выгрузкаМинистерствоЕСПБToolStripMenuItem.Text = "выгрузка министерство ЕСПБ";
+            this.выгрузкаМинистерствоЕСПБToolStripMenuItem.Click += new System.EventHandler(this.выгрузкаМинистерствоЕСПБToolStripMenuItem_Click);
             // 
             // стоматологическиеУслугиToolStripMenuItem
             // 
@@ -669,18 +689,45 @@ namespace ControlDantist
             this.поискУчастиниковВОВToolStripMenuItem.Text = "Поиск участиников ВОВ";
             this.поискУчастиниковВОВToolStripMenuItem.Click += new System.EventHandler(this.поискУчастиниковВОВToolStripMenuItem_Click);
             // 
-            // проверкаБилетовМинистерствоToolStripMenuItem
+            // groupBox1
             // 
-            this.проверкаБилетовМинистерствоToolStripMenuItem.Name = "проверкаБилетовМинистерствоToolStripMenuItem";
-            this.проверкаБилетовМинистерствоToolStripMenuItem.Size = new System.Drawing.Size(308, 22);
-            this.проверкаБилетовМинистерствоToolStripMenuItem.Text = "Проверка билетов Министерство";
-            this.проверкаБилетовМинистерствоToolStripMenuItem.Click += new System.EventHandler(this.проверкаБилетовМинистерствоToolStripMenuItem_Click);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.button1);
+            this.groupBox1.Controls.Add(this.progressBar1);
+            this.groupBox1.Location = new System.Drawing.Point(0, 459);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(991, 41);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Прогресс проверки";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(113, 12);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(634, 23);
+            this.progressBar1.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(766, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(137, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Отмена проверки";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(991, 502);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
@@ -690,6 +737,7 @@ namespace ControlDantist
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -767,5 +815,9 @@ namespace ControlDantist
         private System.Windows.Forms.ToolStripMenuItem статистикаКонецГодаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem общийЛимитДенежныхСредствЗаГодToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem проверкаБилетовМинистерствоToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem выгрузкаМинистерствоЕСПБToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

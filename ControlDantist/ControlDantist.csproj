@@ -12,7 +12,7 @@
     <RootNamespace>ControlDantist</RootNamespace>
     <AssemblyName>ControlDantist</AssemblyName>
     <ApplicationIcon>asd.ico</ApplicationIcon>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -97,10 +97,10 @@
       <HintPath>..\..\..\Библиотека для стоматологии\DantistLibrary\DantistLibrary\bin\Release\DantistLibrary.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.4\lib\net40\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.4\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -153,6 +153,14 @@
     <Compile Include="ClassErrors\ConvertPerson.cs" />
     <Compile Include="ClassErrors\ConvertДоговор.cs" />
     <Compile Include="ClassErrors\ConvertУслуги.cs" />
+    <Compile Include="ClassesForFindEspb\FactoryEspbEsrn.cs" />
+    <Compile Include="ClassesForFindEspb\Factorys\BuilderSqlQueryFindPerson.cs" />
+    <Compile Include="ClassesForFindEspb\ItemEspbPerson\DataPersonEspb.cs" />
+    <Compile Include="ClassesForFindEspb\QueryCreateTempTable.cs" />
+    <Compile Include="ClassesForFindEspb\QueryFindPersonEspEsrn.cs" />
+    <Compile Include="ClassesForFindEspb\QueryInsertResultat.cs" />
+    <Compile Include="ClassesForFindEspb\QueryInsertTempTable.cs" />
+    <Compile Include="ClassesForFindEspb\SqlQueryDatePersonEspb.cs" />
     <Compile Include="ClassessForDB\ConvertDataLetter.cs" />
     <Compile Include="ClassessForDB\DataPerson.cs" />
     <Compile Include="ClassessForDB\DataPersonContract.cs" />
@@ -491,7 +499,9 @@
     <Compile Include="FactoryClass\FactoryFind.cs" />
     <Compile Include="FactoryClass\FactorySqlQueryEsrnValidate.cs" />
     <Compile Include="FactoryClass\FactorySqlQueryEsrnValidatePassword.cs" />
+    <Compile Include="FactoryConnectionStringBD\Config.cs" />
     <Compile Include="FactoryConnectionStringBD\FactoryConnectionStringDB.cs" />
+    <Compile Include="FactoryConnectionStringBD\IConfigConnectionString.cs" />
     <Compile Include="FactorySqlQuery\FactorySqlQueryTicket.cs" />
     <Compile Include="FactorySqlQuery\ICreateSqlQuery.cs" />
     <Compile Include="FactorySqlQuery\IQueryFactory.cs" />
@@ -930,6 +940,7 @@
     <Compile Include="Querys\QueryДоговораБезАктовЗаГод.cs" />
     <Compile Include="Querys\QueryЗаполнитьЛимит.cs" />
     <Compile Include="Querys\QueryСписокЛьготныхКатегорий.cs" />
+    <Compile Include="Querys\SqlEspbQuery.cs" />
     <Compile Include="ReadRegistrProject\DataRowExtensions.cs" />
     <Compile Include="ReadRegistrProject\IReadRegistr.cs" />
     <Compile Include="ReadRegistrProject\ReadRegistrHospital.cs" />
@@ -1060,21 +1071,42 @@
     <Compile Include="UnpaidStatistic\PreferencCategory.cs" />
     <Compile Include="UnpaidStatistic\QueryBalance.cs" />
     <Compile Include="UnpaidStatistic\ReportBalanceStatistic.cs" />
+    <Compile Include="ValidateEsrnBar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ValidateEsrnBar.Designer.cs">
+      <DependentUpon>ValidateEsrnBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="ValidateEsrnLibrary\BuilderQueryFindPerson.cs" />
     <Compile Include="ValidateEsrnLibrary\CategoryPersons.cs" />
+    <Compile Include="ValidateEsrnLibrary\CompareDate\CompareDateBirth.cs" />
+    <Compile Include="ValidateEsrnLibrary\CompareDate\CompareDateDocument.cs" />
+    <Compile Include="ValidateEsrnLibrary\CompareDate\CompareDatePerson.cs" />
+    <Compile Include="ValidateEsrnLibrary\CompareDate\CompareDocument.cs" />
+    <Compile Include="ValidateEsrnLibrary\CompareDate\CompareFioEsrn.cs" />
+    <Compile Include="ValidateEsrnLibrary\CompareDate\ComparePassword.cs" />
+    <Compile Include="ValidateEsrnLibrary\CompareDate\ICompareRegistrPerson.cs" />
+    <Compile Include="ValidateEsrnLibrary\CompareDocumentEsrn.cs" />
     <Compile Include="ValidateEsrnLibrary\ControlBuilderQueryFindPerson.cs" />
     <Compile Include="ValidateEsrnLibrary\ConvertDTableToList.cs" />
     <Compile Include="ValidateEsrnLibrary\CreateTempTable.cs" />
     <Compile Include="ValidateEsrnLibrary\DatePerson.cs" />
+    <Compile Include="ValidateEsrnLibrary\Decoration\CompareDateBirthDecorator.cs" />
+    <Compile Include="ValidateEsrnLibrary\Decoration\CompareFioPersonDecorator.cs" />
+    <Compile Include="ValidateEsrnLibrary\Decoration\Component.cs" />
+    <Compile Include="ValidateEsrnLibrary\Decoration\Decorator.cs" />
     <Compile Include="ValidateEsrnLibrary\DiscriptionValidate.cs" />
     <Compile Include="ValidateEsrnLibrary\FindPersonPasswordQuery.cs" />
     <Compile Include="ValidateEsrnLibrary\FindPersonQuery.cs" />
     <Compile Include="ValidateEsrnLibrary\IBuilderTempTable.cs" />
+    <Compile Include="ValidateEsrnLibrary\ICompareDocEsrn.cs" />
     <Compile Include="ValidateEsrnLibrary\IConvertor.cs" />
     <Compile Include="ValidateEsrnLibrary\InsertDateTempTable.cs" />
+    <Compile Include="ValidateEsrnLibrary\Interfaces\ICompareDate.cs" />
     <Compile Include="ValidateEsrnLibrary\IQueryInsertDate.cs" />
     <Compile Include="ValidateEsrnLibrary\IValidateЭсрн.cs" />
     <Compile Include="ValidateEsrnLibrary\IValidPersonEsrn.cs" />
+    <Compile Include="ValidateEsrnLibrary\MarckPackageProgectContract.cs" />
     <Compile Include="ValidateEsrnLibrary\ValidPersonEsrn.cs" />
     <Compile Include="ValidateEsrnLibrary\ПроверкаЭсрн.cs" />
     <Compile Include="ValidateMedicalServices\ValidateServicesMedical.cs" />
@@ -1095,13 +1127,19 @@
     <Compile Include="ValidateRegistrProject\ValidatePersonFioPassword.cs" />
     <Compile Include="ValidateRegistrProject\ValidatePrefCategoryList2.cs" />
     <Compile Include="ValididtyTicket\BuilderQueryFindTicketEspb.cs" />
+    <Compile Include="ValididtyTicket\BuilderQueryFindЭСРН.cs" />
     <Compile Include="ValididtyTicket\ControlBuilderQueryFindTicket.cs" />
     <Compile Include="ValididtyTicket\CreateTempTableTicket.cs" />
     <Compile Include="ValididtyTicket\CreateTempTableЭСРН.cs" />
     <Compile Include="ValididtyTicket\FIndTicket.cs" />
+    <Compile Include="ValididtyTicket\FindЭсрн.cs" />
+    <Compile Include="ValididtyTicket\GetListDb.cs" />
     <Compile Include="ValididtyTicket\InsertDateEspb.cs" />
+    <Compile Include="ValididtyTicket\InsertQueryPcGuid.cs" />
     <Compile Include="ValididtyTicket\InsertTableTicket.cs" />
     <Compile Include="ValididtyTicket\InsertTableЭсрн.cs" />
+    <Compile Include="ValididtyTicket\QueryBarCode.cs" />
+    <Compile Include="ValididtyTicket\QueryPC_GUID.cs" />
     <Compile Include="ValididtyTicket\ФабрикаSQLЭсрн.cs" />
     <Compile Include="ValidPersonContract\CompareContract.cs" />
     <Compile Include="ValidPersonContract\CompareContractForNumber.cs" />
@@ -1357,6 +1395,9 @@
     <None Include="Repository\DataClasses1.dbml.layout">
       <DependentUpon>DataClasses1.dbml</DependentUpon>
     </None>
+    <EmbeddedResource Include="ValidateEsrnBar.resx">
+      <DependentUpon>ValidateEsrnBar.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="СhangeAkt.resx">
       <DependentUpon>СhangeAkt.cs</DependentUpon>
     </EmbeddedResource>
@@ -1532,6 +1573,9 @@
       <ProductName>Установщик Windows 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

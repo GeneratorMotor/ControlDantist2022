@@ -41,7 +41,6 @@ namespace ControlDantist.WriteDB
                 person.Отчество = "";
              }
 
-            var asd = iCount;
 
             // Поиск льготника.
             var persons = dc.ТабЛьгоготник.Where(w => w.Фамилия.Trim().ToLower() == person.Фамилия.Trim().ToLower() && w.Имя.Trim().ToLower() == person.Имя.ToLower().Trim() && w.Отчество.Trim().ToLower() == person.Отчество.Trim().ToLower() && w.ДатаРождения == person.ДатаРождения).OrderByDescending(w=>w.id_льготник).FirstOrDefault();
@@ -49,16 +48,16 @@ namespace ControlDantist.WriteDB
             // Если льготников нет в БД значит его можно писать в БД.
             if (persons != null)
             {
-                    // Запретим запись льготника в БД.
-                    flagExesWritePerson = false;
+                // Запретим запись льготника в БД.
+                flagExesWritePerson = false;
 
-                    // Так как мы получаем 1-го льготника с конца согласно метода FirstOrDefault.
-                    this.person.id_льготник = persons.id_льготник;  
+                // Так как мы получаем 1-го льготника с конца согласно метода FirstOrDefault.
+                this.person.id_льготник = persons.id_льготник;
             }
             else
             {
-                    // Разрешим запись льготника в БД.
-                    flagExesWritePerson = true;
+                // Разрешим запись льготника в БД.
+                flagExesWritePerson = true;
             }
 
             return flagExesWritePerson;

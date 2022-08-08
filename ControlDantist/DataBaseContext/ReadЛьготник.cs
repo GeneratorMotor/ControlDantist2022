@@ -51,7 +51,7 @@ namespace ControlDantist.DataBaseContext
             personFull.НомерДокумента = this.rPers.FieldOfDefault<string>("НомерДокумента");
 
             // Дата выдачи документа.
-            personFull.ДатаВыдачиДокумента = Время.LocalDate(Convert.ToDateTime(this.rPers["ДатаВыдачиДокумента"]));
+            personFull.ДатаВыдачиДокумента = Время.LocalDate(Convert.ToDateTime(this.rPers["ДатаВыдачиДокумента"]).ToLocalTime());
             //personFull.ДатаВыдачиДокумента = this.rPers.FieldOfDefault<DateTime>("ДатаВыдачиДокумента");
             personFull.КемВыданДокумент = this.rPers.FieldOfDefault<string>("КемВыданДокумент");
             // Так как мы работаем только с Саратовской областью то id области не меняется.
