@@ -147,8 +147,10 @@ namespace ControlDantist
                 DatePersonForDisplay dp = displayResultValidate.GetFioPerson(this.listProjectContrats.ToList());
 
                 this.txtЛьготник.Text = dp.Фио + " " + dp.ДатаРождения + " г. р.";
-                this.txtАдрес.Text = dp.Адрес;
+                this.txtАдрес.Text = packet.AddressPerson;
                 this.txtДокумент.Text = dp.Удостоверение;
+
+
             }
 
             // Если договор не прошел проверку.

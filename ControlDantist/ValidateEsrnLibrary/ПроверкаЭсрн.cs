@@ -42,10 +42,8 @@ namespace ControlDantist.ValidateEsrnLibrary
             // Отсортируем список 
             foreach (var person in this.list.Where(w=>w.FlagValidateEsrn == false).OrderBy(w => w.Packecge.льготник.Фамилия))
             {
-                // Класс описывающий результат проверки.
-                //DiscriptionValidate discriptionError = new DiscriptionValidate();
-
-                //person.DiscriptionValidate = discriptionError;
+                // Коллекция для хранения адреса льготника полученного из ЭСРН.
+                List<string> stringAddress = new List<string>();
 
                 // Шаблон строитель (частично реализованный) без прораба.
                 ValidPersonEsrn validPersonEsrn = new ValidPersonEsrn();
@@ -67,6 +65,20 @@ namespace ControlDantist.ValidateEsrnLibrary
 
                     // Прооверка дня рождения.
                     validPersonEsrn.ValidDr(person, itm);
+
+                    // Добавим адрес льготника.
+                    stringAddress.Add(itm.Адрес.Trim());
+
+                }
+
+                // Сгруппируем полученные адреса для текущего льготника, что бы исключить дублирования.
+                var adress = stringAddress.GroupBy(w => w).FirstOrDefault();
+
+                // Присвоим значение адреса из ЭСРН в данные для льготника.
+                foreach(var itm in adress)
+                {
+                    // Присвоим адрес регисрации (проживания) льготника.
+                    person.AddressPerson = itm.Trim();
                 }
 
                     // Проверка паспорта.
@@ -95,8 +107,10 @@ namespace ControlDantist.ValidateEsrnLibrary
 
                     int countFlag = person.DiscriptionValidate.CountListFlagErrorTrue();
 
+                    
+
                     // Пометим льготников у котрых даннные совпали с данными в ЭСРН.
-                    MarckPackageProgectContract marck = new MarckPackageProgectContract(person);
+                MarckPackageProgectContract marck = new MarckPackageProgectContract(person);
                     marck.SetMarck();
             }
 

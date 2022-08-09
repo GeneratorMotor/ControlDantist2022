@@ -1107,6 +1107,7 @@
     <Compile Include="ValidateEsrnLibrary\IValidateЭсрн.cs" />
     <Compile Include="ValidateEsrnLibrary\IValidPersonEsrn.cs" />
     <Compile Include="ValidateEsrnLibrary\MarckPackageProgectContract.cs" />
+    <Compile Include="ValidateEsrnLibrary\ValidateCategoryPerson.cs" />
     <Compile Include="ValidateEsrnLibrary\ValidPersonEsrn.cs" />
     <Compile Include="ValidateEsrnLibrary\ПроверкаЭсрн.cs" />
     <Compile Include="ValidateMedicalServices\ValidateServicesMedical.cs" />

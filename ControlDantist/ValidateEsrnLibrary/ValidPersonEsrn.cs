@@ -49,6 +49,11 @@ namespace ControlDantist.ValidateEsrnLibrary
 
         }
 
+        public void ValidCategoryPerson(ItemLibrary itemLibrary, DatePerson datePerson)
+        {
+            //if(string.Compare(itemLibrary.Packecge.тЛьготнаяКатегория?.ЛьготнаяКатегория?.Replace(" ","")?.ToLower()?.Trim(),datePerson.)
+        }
+
         public void ValidDr(ItemLibrary itemLibrary, DatePerson datePerson)
         {
 

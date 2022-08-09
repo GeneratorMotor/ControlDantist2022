@@ -112,11 +112,11 @@ namespace ControlDantist.ValidateRegistrProject
                 //    continue;
                 //}
 
-                //if (sKey.Trim() != "Вольский".Trim())
-                //{
-                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
-                //    continue;
-                //}
+                if (sKey.Trim() != "Вольский".Trim())
+                {
+                    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                    continue;
+                }
 
                 // Переменная хранит строку подключения к БД.
                 string sConnection = string.Empty;
@@ -178,7 +178,6 @@ namespace ControlDantist.ValidateRegistrProject
                         IConvertor<DatePerson> convertor = new ConvertDTableToList(tabФИО);
 
                         // Сконвертированные данные из таблицы в список по льготнику и документам льготника полученных из ЭСРН.
-                        
                         List<DatePerson> listDate = convertor.ConvertDate();
 
                         // Проверим есть ли записи в результате выгрузки из ЭСРН.
@@ -188,18 +187,11 @@ namespace ControlDantist.ValidateRegistrProject
                             IValidateЭсрн validateЭсрн = new ПроверкаЭсрн(listDate, this.list);
                             validateЭсрн.Validate();
                         }
-
-                        // Тест.
-                        var errorTest = this.list;
                     }
-
                 }
 
                 mutexObj.ReleaseMutex();
-
             }
-
-            var asdTest = this.list;
         }
 
         
