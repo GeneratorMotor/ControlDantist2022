@@ -12,17 +12,18 @@ namespace ControlDantist.ClassesForFindEspb.Factorys
     {
 
         // Фабрика для формирования SQL запросов.
-        private FactoryEspbEsrn factory;
+        //private FactoryEspbEsrn factory;
+        private IFactoryFindPerson<ItemReportEspb> factory;
 
         // Переменная для хранеия имени временной таблицы.
         private string nameTempTable = string.Empty;
 
-        private List<DataPersonEspb> list;
+        private List<ItemReportEspb> list;
 
         // Строка для хранения SQl запрроса.
         private StringBuilder buiderSql = new StringBuilder();
 
-        public BuilderSqlQueryFindPerson(FactoryEspbEsrn factory, string nameTempTable, List<DataPersonEspb> list)
+        public BuilderSqlQueryFindPerson(IFactoryFindPerson<ItemReportEspb> factory, string nameTempTable, List<ItemReportEspb> list)
         {
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
             this.nameTempTable = nameTempTable ?? throw new ArgumentNullException(nameof(nameTempTable));
@@ -43,8 +44,6 @@ namespace ControlDantist.ClassesForFindEspb.Factorys
         {
             // Джойн временной таблицы с данными на удаленном сервере.
             IQuery queryFindPerson = this.factory.FindPersonSqlQuery(this.nameTempTable);
-
-            string sTest = queryFindPerson.Query();
 
             buiderSql.Append(queryFindPerson.Query());
         }

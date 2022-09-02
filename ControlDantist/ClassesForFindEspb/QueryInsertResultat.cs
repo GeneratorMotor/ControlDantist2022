@@ -20,8 +20,9 @@ namespace ControlDantist.ClassesForFindEspb
         private DateTime ДатаРождения;
         private string Адрес = string.Empty;
         private string Район = string.Empty;
+        private string Снилс = string.Empty;
 
-        public QueryInsertResultat(string pC_GUID, string серияДокумента, string номерДокумента, string названиеДокумента, DateTime датаДокумента, string категория, string фамилия, string имя, string отчество, DateTime датаРождения, string адрес, string район)
+        public QueryInsertResultat(string pC_GUID, string серияДокумента, string номерДокумента, string названиеДокумента, DateTime датаДокумента, string категория, string фамилия, string имя, string отчество, DateTime датаРождения, string адрес, string район, string снилс)
         {
             PC_GUID = pC_GUID;
             СерияДокумента = серияДокумента;
@@ -35,6 +36,7 @@ namespace ControlDantist.ClassesForFindEspb
             ДатаРождения = датаРождения;
             Адрес = адрес;
             Район = район;
+            Снилс = снилс;
         }
 
         public string Query()
@@ -51,7 +53,8 @@ namespace ControlDantist.ClassesForFindEspb
                                ,[Отчество]
                                ,[ДатаРождения]
                                ,[Адрес]
-                               ,[Район])
+                               ,[Район]
+                               ,[Снилс])
                          VALUES
                                ( '" + this.PC_GUID + "' , " +
                                " '" + this.СерияДокумента + "'  , " +
@@ -64,7 +67,8 @@ namespace ControlDantist.ClassesForFindEspb
                                " '" + this.Отчество + "' , " +
                                " '" + this.ДатаРождения + "' , " +
                                " '" + this.Адрес + "' , " +
-                               " '" + this.Район + "' ) ";
+                               " '" + this.Район + "' , " +
+                               " '" + this.Снилс + "' ) ";
 
             return insert;
 

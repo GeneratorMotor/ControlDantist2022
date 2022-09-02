@@ -33,16 +33,12 @@ namespace ControlDantist.ValidateRegistrProject
         // Переменная для поиска льготника по ФИО и номеру пасспорта.
         private IBuilderTempTable builderTempTablePassword;
 
-        static Mutex mutexObj = new Mutex();
+        // Создадим Мютекс.
+        //static Mutex mutexObj = new Mutex();
 
         private IConfigConnectionString configConnectionString;
 
         private CancellationToken token;
-
-        //// Прогресс бар на выполнение процевсса проверки.
-        //System.Windows.Forms.ProgressBar progressBar;
-
-        //private Progress<int> progress;
 
         /// <summary>
         /// Сверка данных из реестра с данными из ЭСРН.
@@ -79,23 +75,30 @@ namespace ControlDantist.ValidateRegistrProject
             // Пройдемся по строкам подключения .
             foreach (KeyValuePair<string, string> dStringConnect in this.configConnectionString.Select())
             {
+
                 // Заблокируем текущий поток.
-                mutexObj.WaitOne();
+                //mutexObj.WaitOne();
 
-                // Для теста.
-                string sKey = string.Empty;
-                sKey = dStringConnect.Key.Trim();
+                    // Для теста.
+                    string sKey = string.Empty;
+                    sKey = dStringConnect.Key.Trim();
 
 
-                // Выход из проверки если пользователь запросил окончание проверки.
-                if(this.token.IsCancellationRequested == true)
-                {
-                    return;
-                }
+                    // Выход из проверки если пользователь запросил окончание проверки.
+                    if (this.token.IsCancellationRequested == true)
+                    {
+                        return;
+                    }
 
                 // TODO: Отключем проверку договоров.
                 // Отключим проверку по ЭСРН.
                 //continue;
+
+                //if (sKey.Trim() != "Балаковский".Trim() || sKey.Trim() != "Советский".Trim() || sKey.Trim() != "Вольский".Trim())
+                //{
+                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                //    continue;
+                //}
 
                 //// TODO: Отключим районы.
                 //////Оставим участок кода для отработки быстроого подключения
@@ -112,86 +115,88 @@ namespace ControlDantist.ValidateRegistrProject
                 //    continue;
                 //}
 
-                if (sKey.Trim() != "Вольский".Trim())
-                {
-                    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
-                    continue;
-                }
+                //if (sKey.Trim() != "Вольский".Trim())
+                //{
+                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
+                //    continue;
+                //}
 
                 // Переменная хранит строку подключения к БД.
                 string sConnection = string.Empty;
-                sConnection = dStringConnect.Value.ToString().Trim();
+                    sConnection = dStringConnect.Value.ToString().Trim();
 
-                // Переменная для хранения счетчика продвижения по району.
-                int countProgress = 0;
+                    // Переменная для хранения счетчика продвижения по району.
+                    int countProgress = 0;
 
-                //Выполним проверку в единой транзакции для конкретного района (строки подключения)
-                using (SqlConnection con = new SqlConnection(sConnection))
-                {
-                    try
+                    //Выполним проверку в единой транзакции для конкретного района (строки подключения)
+                    using (SqlConnection con = new SqlConnection(sConnection))
                     {
-                        // ПОдключемся к БД.
-                        con.Open();
-                      
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            // ПОдключемся к БД.
+                            con.Open();
+
+                        }
+                        catch
+                        {
+                            // Счетчик прогресса.
+                            countProgress++;
+
+                            // Передадим значение счетчик прогресса.
+                            progress?.Report(countProgress);
+
+                            System.Windows.Forms.MessageBox.Show("Сервер в районе " + dStringConnect.Key + " в настоящий момент не доступен.");
+                            continue;
+                        }
+
                         // Счетчик прогресса.
                         countProgress++;
 
                         // Передадим значение счетчик прогресса.
                         progress?.Report(countProgress);
 
-                        System.Windows.Forms.MessageBox.Show("Сервер в районе " + dStringConnect.Key + " в настоящий момент не доступен.");
-                        continue;
-                    }
+                        // Переменная для хранения льготной категории.
+                        string cateroryPerson = string.Empty;
 
-                    // Счетчик прогресса.
-                    countProgress++;
+                        // Переменная дя хранения строки запроса.
+                        string queryФИО = string.Empty;
 
-                    // Передадим значение счетчик прогресса.
-                    progress?.Report(countProgress);
+                        // Воспользуемся Фабрикой с паттерном Builder.
+                        builderTempTable = new BuilderQueryFindPerson(factorySqlQuery, "#t2_temp", this.list);
 
-                    // Переменная для хранения льготной категории.
-                    string cateroryPerson = string.Empty;
+                        // Сформируем SQL запрос к БД на поиск льготника по ФИО и по номеру документа.
+                        ControlBuilderQueryFindPerson controlBuilderQueryFindPerson = new ControlBuilderQueryFindPerson(builderTempTable);
+                        queryФИО = controlBuilderQueryFindPerson.CreateBuilder();
 
-                    // Переменная дя хранения строки запроса.
-                    string queryФИО = string.Empty;
+                        // Объявление начала транзакции.
+                        SqlTransaction sqlTransaction = con.BeginTransaction();
 
-                    // Воспользуемся Фабрикой с паттерном Builder.
-                    builderTempTable = new BuilderQueryFindPerson(factorySqlQuery, "#t2_temp", this.list);
+                        // Данные по льготникам найденные в ЭСРН по ФИО и документам дающим право на получение льгот.
+                        DataTable tabФИО = ТаблицаБД.GetTableSQL(queryФИО, "ФИО", con, sqlTransaction);
 
-                    // Сформируем SQL запрос к БД на поиск льготника по ФИО и по номеру документа.
-                    ControlBuilderQueryFindPerson controlBuilderQueryFindPerson = new ControlBuilderQueryFindPerson(builderTempTable);
-                    queryФИО = controlBuilderQueryFindPerson.CreateBuilder();
-
-                    // Объявление начала транзакции.
-                    SqlTransaction sqlTransaction = con.BeginTransaction();
-
-                    // Данные по льготникам найденные в ЭСРН по ФИО и документам дающим право на получение льгот.
-                    DataTable tabФИО = ТаблицаБД.GetTableSQL(queryФИО, "ФИО", con, sqlTransaction);
-
-                    if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
-                    {
-
-                        // Сконвертируем данные из таблицы в список.
-                        IConvertor<DatePerson> convertor = new ConvertDTableToList(tabФИО);
-
-                        // Сконвертированные данные из таблицы в список по льготнику и документам льготника полученных из ЭСРН.
-                        List<DatePerson> listDate = convertor.ConvertDate();
-
-                        // Проверим есть ли записи в результате выгрузки из ЭСРН.
-                        if(listDate.Count > 0)
+                        if (tabФИО != null && tabФИО.Rows != null && tabФИО.Rows.Count > 0)
                         {
-                            // Проведем сверку данных по льготникам из реесстра с данными полученными из ЭСРН.
-                            IValidateЭсрн validateЭсрн = new ПроверкаЭсрн(listDate, this.list);
-                            validateЭсрн.Validate();
+
+                            // Сконвертируем данные из таблицы в список.
+                            IConvertor<DatePerson> convertor = new ConvertDTableToList(tabФИО);
+
+                            // Сконвертированные данные из таблицы в список по льготнику и документам льготника полученных из ЭСРН.
+                            List<DatePerson> listDate = convertor.ConvertDate();
+
+                            // Проверим есть ли записи в результате выгрузки из ЭСРН.
+                            if (listDate.Count > 0)
+                            {
+                                // Проведем сверку данных по льготникам из реесстра с данными полученными из ЭСРН.
+                                IValidateЭсрн validateЭсрн = new ПроверкаЭсрн(listDate, this.list);
+                                validateЭсрн.Validate();
+                            }
                         }
                     }
-                }
 
-                mutexObj.ReleaseMutex();
+                    // Разблокируем поток.
+                    //mutexObj.ReleaseMutex();
             }
+
         }
 
         

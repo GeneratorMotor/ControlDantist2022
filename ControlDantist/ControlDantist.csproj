@@ -18,6 +18,10 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -30,12 +34,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -153,13 +153,26 @@
     <Compile Include="ClassErrors\ConvertPerson.cs" />
     <Compile Include="ClassErrors\ConvertДоговор.cs" />
     <Compile Include="ClassErrors\ConvertУслуги.cs" />
+    <Compile Include="ClassesForFindEspb\Adapter\ConvertDataTableToList.cs" />
+    <Compile Include="ClassesForFindEspb\Adapter\IAdapter.cs" />
+    <Compile Include="ClassesForFindEspb\ConnectionStringDb\ConnectionStringBdEspb.cs" />
+    <Compile Include="ClassesForFindEspb\ConnectionStringDb\ConnectionStringDBTemp.cs" />
     <Compile Include="ClassesForFindEspb\FactoryEspbEsrn.cs" />
     <Compile Include="ClassesForFindEspb\Factorys\BuilderSqlQueryFindPerson.cs" />
+    <Compile Include="ClassesForFindEspb\Factorys\FactoryConnectionStringOurBD.cs" />
+    <Compile Include="ClassesForFindEspb\IFactoryFindPerson.cs" />
     <Compile Include="ClassesForFindEspb\ItemEspbPerson\DataPersonEspb.cs" />
+    <Compile Include="ClassesForFindEspb\ItemReportEspb.cs" />
     <Compile Include="ClassesForFindEspb\QueryCreateTempTable.cs" />
     <Compile Include="ClassesForFindEspb\QueryFindPersonEspEsrn.cs" />
     <Compile Include="ClassesForFindEspb\QueryInsertResultat.cs" />
     <Compile Include="ClassesForFindEspb\QueryInsertTempTable.cs" />
+    <Compile Include="ClassesForFindEspb\QuerysForFindEsrn\FactoryFindPerson.cs" />
+    <Compile Include="ClassesForFindEspb\QuerysForFindEsrn\QueryCreateTempTable.cs" />
+    <Compile Include="ClassesForFindEspb\QuerysForFindEsrn\QueryFindPersonEspEsrn.cs" />
+    <Compile Include="ClassesForFindEspb\QuerysForFindEsrn\QueryInsertTempTable.cs" />
+    <Compile Include="ClassesForFindEspb\Rezult\QueryInsertRezultDoc.cs" />
+    <Compile Include="ClassesForFindEspb\Rezult\QueryWriteTableResult.cs" />
     <Compile Include="ClassesForFindEspb\SqlQueryDatePersonEspb.cs" />
     <Compile Include="ClassessForDB\ConvertDataLetter.cs" />
     <Compile Include="ClassessForDB\DataPerson.cs" />
@@ -1547,6 +1560,7 @@
   <ItemGroup>
     <Folder Include="bin\Debug\Документы\" />
     <Folder Include="bin\Release\Документы\" />
+    <Folder Include="ESPB\" />
     <Folder Include="Документы\" />
   </ItemGroup>
   <ItemGroup>

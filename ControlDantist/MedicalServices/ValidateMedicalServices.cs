@@ -58,40 +58,33 @@ namespace ControlDantist.MedicalServices
                 {
                     foreach (var item in this.reestrContract.SetRegistServices())
                     {
-                        // Получим количество услуг в договоре.
-                        int countServices = item.Packecge.listUSlug.Count();
-
-                        // Группируем услуги в проекте договоров.
+                        // Группируем услуги в проекте договоров по названию и по цене.
                         var resultGroupContract = from r in item.Packecge.listUSlug
                                                   group r by new { р1 = r.НаименованиеУслуги.Trim(), р2 = r.Сумма } into g
-                                          //group r by new { р1 = r.НаименованиеУслуги.Trim(), р2 = r.Сумма } into g
                                           select g.Key;
 
+                        // Количество услуг в договоре сгруппированное.
+                        int iCountContract = resultGroupContract.Count();
 
-                        // Приведем списки к одному типу.
-                        var listServicesHosp = listKU.Select(x => new УслугиПоДоговору { НаименованиеУслуги = x.ВидУслуги, цена = x.Цена }).ToList();
+                        // Приведем списки из справочника поликлинники у нас на сервере к одному типу.
+                        var listServicesHosp = listKU.Select(x => new УслугиПоДоговору { НаименованиеУслуги = x.ВидУслуги.Trim(), цена = x.Цена }).ToList();
 
                         //Сджойним усулуги по договру и услуги в поликлиннике.
                         var result = from x in item.Packecge.listUSlug
                                      join y in listServicesHosp
-                                     on new { X1 = x.НаименованиеУслуги.Trim().ToLower(), X2 = x.цена } equals new { X1 = y.НаименованиеУслуги.Trim().ToLower(), X2 = y.цена }
-                                     //on new { X1 = x.НаименованиеУслуги.Trim().ToLower().Replace(" ", "") } equals new { X1 = y.НаименованиеУслуги.Trim().ToLower().Replace(" ", "") }
+                                     on new { X1 = x.НаименованиеУслуги.Trim().ToLower().Replace(" ", string.Empty), X2 = x.цена } equals new { X1 = y.НаименованиеУслуги.Trim().ToLower().Replace(" ", string.Empty), X2 = y.цена }
                                      select new
                                      {
                                          x.НаименованиеУслуги,
                                          x.Сумма
                                      };
 
-                        // Количество услуг в договоре сгруппированное.
-                        int iCountContract = resultGroupContract.Count();
-
                         // Сгруппируем услуги.
                         var resultGroup = from r in result
                                 group r by new { р1 = r.НаименованиеУслуги.Trim(), р2 = r.Сумма } into g
-                                          //group r by new { р1 = r.НаименованиеУслуги.Trim(), р2 = r.Сумма } into g
                                 select g.Key;
 
-                        // Группируем количество улуг в Join.
+                        // Количество улуг в Join.
                         int countJoin = resultGroup.Count();
 
                         // Если количество услуги в договоре совпало с Join 
@@ -100,6 +93,15 @@ namespace ControlDantist.MedicalServices
                             // Считаем что договор прошёл проверку по медицинским услугам.
                             item.FlagValidateMedicalServices = true;
                         }
+                        else
+                        {
+                            // выполним левое объедтнение
+                            var raznust = resultGroupContract.Except(resultGroup).ToList();
+
+                            var test = "";
+
+                        }
+
                     }
                 }
 

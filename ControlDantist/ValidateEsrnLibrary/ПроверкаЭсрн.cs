@@ -72,21 +72,34 @@ namespace ControlDantist.ValidateEsrnLibrary
                 }
 
                 // Сгруппируем полученные адреса для текущего льготника, что бы исключить дублирования.
-                var adress = stringAddress.GroupBy(w => w).FirstOrDefault();
+                var adress = stringAddress?.GroupBy(w => w)?.FirstOrDefault();
 
-                // Присвоим значение адреса из ЭСРН в данные для льготника.
-                foreach(var itm in adress)
+                if (adress != null)
                 {
-                    // Присвоим адрес регисрации (проживания) льготника.
-                    person.AddressPerson = itm.Trim();
+                    // Присвоим значение адреса из ЭСРН в данные для льготника.
+                    foreach (var itm in adress)
+                    {
+                        // Присвоим адрес регисрации (проживания) льготника.
+                        person.AddressPerson = itm.Trim();
+                    }
+                }
+                else
+                {
+                    person.AddressPerson = "";
+
+                    var personKto = person;
                 }
 
                     // Проверка паспорта.
                     var passwords = this.listPerson.Where(w => w.НаименованиеДокумента.Trim().ToLower() == "Паспорт гражданина России".Trim().ToLower() && w.Фамилия.ToLower().Trim() == person.Packecge.льготник.Фамилия.ToLower().Trim());
 
-                    foreach (var pass in passwords)
+                    if (passwords != null)
                     {
-                        validPersonEsrn.ValidPassword(person, pass);
+                        foreach (var pass in passwords)
+                        {
+                            validPersonEsrn.ValidPassword(person, pass);
+                        }
+
                     }
 
                     // Экземпляр класса проверки документа по серии и номеру документа, а так же дате выдачи.
@@ -105,12 +118,12 @@ namespace ControlDantist.ValidateEsrnLibrary
                         person.DiscriptionValidate.SetFlag(false, " Ошибка в серии, номере или дате выдачи документа;  ");
                     }
 
-                    int countFlag = person.DiscriptionValidate.CountListFlagErrorTrue();
+                    //int countFlag = person.DiscriptionValidate.CountListFlagErrorTrue();
 
                     
 
                     // Пометим льготников у котрых даннные совпали с данными в ЭСРН.
-                MarckPackageProgectContract marck = new MarckPackageProgectContract(person);
+                    MarckPackageProgectContract marck = new MarckPackageProgectContract(person);
                     marck.SetMarck();
             }
 

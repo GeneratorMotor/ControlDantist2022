@@ -51,6 +51,7 @@ using ControlDantist.ClassesForFindEspb.Factorys;
 using ControlDantist.ClassesForFindEspb.ItemEspbPerson;
 using ControlDantist.FactoryConnectionStringBD;
 using Config = ControlDantist.FactoryConnectionStringBD.Config;
+using ControlDantist.ClassesForFindEspb.Adapter;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -4561,22 +4562,15 @@ namespace ControlDantist
                 // Если список договров больше 0 тогда проводим проверку в ЭСРН.
                 if (listDoc != null && listDoc.Count > 0)
                 {
-
-                    // // Получим стркои поюдключения к БД ЭСРН в районах области.
-                    // IConfigConnectionString configConnectionString = factoryConnectionStringDB.ConnectionStringDB();
-
-                    //// Осуществляем проверку договров по БД ЭСРН.
-                    // EsrnPersonValidate esrnPersonValidate = new EsrnPersonValidate(packegeDateContract, configConnectionString);
-                    // esrnPersonValidate.Validate();
-
-
-                    int countProgress = 0;
-
                     // Установим характеристики прогресс бара.
-                    this.progressBar1.Minimum = 0; // по умолчанию
-                    this.progressBar1.Maximum = 44; //по умолчанию
-                                                    //    //                                //progressBar1.Value =0; //по умолчанию
-                    this.progressBar1.Step = 1; //
+                    // Минимальное значение
+                    this.progressBar1.Minimum = 0; 
+
+                    // Максимальное значениею
+                    this.progressBar1.Maximum = 44; 
+
+                    // Шаг.                                
+                    this.progressBar1.Step = 1; 
 
                     var progress = new Progress<int>();
 
@@ -4625,8 +4619,11 @@ namespace ControlDantist
                         // Подгрузим в форму библиотеку договоров.
                         formValid.ВыгрузкаПроектДоговоров = unload;
 
-                        // Откроем окно с результатами проверки.
-                        formValid.Show();
+                    // После проверки обнулим прогресс бар.
+                    this.progressBar1.Value = 0;
+
+                    // Откроем окно с результатами проверки.
+                    formValid.Show();
 
                     //}
                 }
@@ -4645,7 +4642,15 @@ namespace ControlDantist
         // Асинхронный метод.
         private async System.Threading.Tasks.Task ValidateEsrnAsync(Progress<int> progress, List<ItemLibrary> packegeDateContract, CancellationToken token)
         {
+            Mutex mutex = new Mutex();
+
+            mutex.WaitOne();
+
             await System.Threading.Tasks.Task.Run(() => ValidateAsync(progress, packegeDateContract, token));
+
+            mutex.ReleaseMutex();
+
+            mutex.Close();
             //return await 
         }
 
@@ -4657,8 +4662,6 @@ namespace ControlDantist
            // Осуществляем проверку договров по БД ЭСРН.
             EsrnPersonValidate esrnPersonValidate = new EsrnPersonValidate(packegeDateContract, configConnectionString, token);
             esrnPersonValidate.Validate(progress);
-
-            
         }
 
 
@@ -5989,8 +5992,6 @@ namespace ControlDantist
 
             List<string> listBarCode = getListBarCode.GetList();
 
-            ////listBarCode.Add("8833005");
-
             // Фабрика для получения данных из ЕСПБ.
             FactorySqlQueryTicket factorySqlQueryTicket = new FactorySqlQueryTicket();
 
@@ -6183,67 +6184,61 @@ namespace ControlDantist
         private void выгрузкаМинистерствоЕСПБToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Сформируем SQL запрос.
-            //IQuery query = new SqlEspbQuery();
             IQuery query = new SqlQueryDatePersonEspb();
             string queryEspb = query.Query();
 
-            string sConnection = "Data Source=10.159.102.21;Initial Catalog=espb;User ID=sa;Password=sitex";
+            // Фабрика строк подключения к БД ЕСПБ и БД ConnectionStringsDirectory- содержащая результат выполнения проверки.
+            FactoryConnectionStringOurBD factoruOurDb = new FactoryConnectionStringOurBD();
 
-            string sConnectionTestDB = "Data Source=10.159.102.21;Initial Catalog=ConnectionStringsDirectory;User ID=sa;Password=sitex";
+            // Запрос на получение строки подключения к ЕСПБ.
+            IQuery queryConnectionStringEspb = factoruOurDb.ConnectionStringEspb();
+
+            // Строка подклюдчения к ЕСПБ.
+            string sConnection = queryConnectionStringEspb.Query();
+
+            // Запрос на получение строки подключения к БД с результатом проверки.
+            IQuery queryRezultDB = factoruOurDb.ConnectionStringDbResult();
+
+            // Строка подключения к БД с результатом проверки.
+            string sConnectionTestDB = queryRezultDB.Query();
 
             // Получим Дату
             ТаблицаSqlBd таблицаSqlBd = new ТаблицаSqlBd(sConnection, queryEspb, "ТаблицаЕспб");
             DataTable tabEspb = таблицаSqlBd.GetTableSQL();
 
-            // Сконвертируем DataTable в List DatePersonEspb.
-            var list = tabEspb.Rows.OfType<DataRow>().Select(w => new DataPersonEspb { PC_Guid = w.Field<string>("PC_Guid"), ДатаДокумента = w.Field<DateTime>("ДатаДокумента"), Категория = w.Field<string>("Категория"), СерияДокумента = w.Field<string>("СерияДокумента"), НомерДокумента = w.Field<string>("НомерДокумента"), НазваниеДокумента = w.Field<string>("НазваниеДокумента") }).ToList();
+            // Преобразуем DataTable с результатами запросв в список.
+            IAdapter<IEnumerable<ItemReportEspb>> adapter = new ClassesForFindEspb.Adapter.ConvertDataTableToList(tabEspb);
+            var list = adapter.Convertor().ToList();
+
+            // Фаьрика SQL запросов для подготовки поиска льготника по БД ЕСРН.
+            IFactoryFindPerson<ItemReportEspb> factoryFindPerson = new ControlDantist.ClassesForFindEspb.QuerysForFindEsrn.FactoryFindPerson();
 
             // Фабрика запросов на получение данных из ЭСРН по льготникам у которых отсутствует СНИЛС в базе ЕСПБ.
-            IBuilderTempTable builderTempTable = new BuilderSqlQueryFindPerson(new FactoryEspbEsrn(), "#temp2", list);
+            IBuilderTempTable builderTempTable = new BuilderSqlQueryFindPerson(factoryFindPerson, "#temp2", list);
 
             // Сформируем SQL запрос к БД на поиск льготника по ФИО и по номеру документа.
             ControlBuilderQueryFindPerson controlBuilderQueryFindPerson = new ControlBuilderQueryFindPerson(builderTempTable);
             string queryEsrn = controlBuilderQueryFindPerson.CreateBuilder();
 
-            // Фабрика подключения к БД ЭСРН.
-            //FactoryConnectionStringDB factoryConnection = new FactoryConnectionStringDB();
+            //IConfigConnectionString configConnectionString = new Config();
+            IConfigConnectionString myConfig = new Config();
 
-            //// Пройдемся по районам области.
-            //// Получим строки подключения к БД в районах области.
-            //Config pullConnection = factoryConnection.ConnectionStringDB();
-
-            Config myConfig = new Config();
-
-            var asd = myConfig.Select();
-
+            // Мютекс 
             Mutex mutexObj = new Mutex();
 
             // Пройдемся по строкам подключения.
-            foreach (KeyValuePair<string, string> dStringConnect in myConfig.Select().OrderBy(w=>w.Key))
+            foreach (KeyValuePair<string, string> dStringConnect in myConfig.Select().OrderBy(w => w.Key))
             {
                 mutexObj.WaitOne();
 
-                //if(dStringConnect.Key.Trim().ToLower() == "Балаковский".ToLower().Trim())
-                //{
-                //    string iTest = "";
-                //}
-
-                ////// TODO: Отключим районы.
-                ////////Оставим участок кода для отработки быстроого подключения
-                ///////// К нужному району.
-                //if (dStringConnect.Key.Trim() == "Фёдоровский".Trim())
+                //// TODO: Отключим районы.
+                //////Оставим участок кода для отработки быстроого подключения
+                /////// К нужному району.
+                //if (dStringConnect.Key.Trim() == "Балаковский".Trim())
                 //{
                 //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
                 //    break;
                 //    //continue;
-                //}
-                //if (dStringConnect.Key.Trim() == "Волжский".Trim())
-                //{
-                //    //Отключим проверку договоров по ЭСРН кроме Ленинского района.
-                //    //beak;
-                //    //continue;
-
-                //    var test = "";
                 //}
 
                 // Получим Дату
@@ -6254,11 +6249,16 @@ namespace ControlDantist
                 if (tabEsrn != null && tabEsrn.Rows != null && tabEsrn.Rows.Count > 0)
                 {
 
+                    IQuery queryInsert = new ControlDantist.ClassesForFindEspb.Rezult.QueryWriteTableResult(tabEsrn, dStringConnect.Key);
+
+                    string strQueryInsert = queryInsert.Query();
+
+
                     // Запишем в БД.
-                    string queryInsert = WriteTabEspbEsrn(tabEsrn, dStringConnect.Key);
+                    //string queryInsert = WriteTabEspbEsrn(tabEsrn, dStringConnect.Key);
 
                     // Выполняем инструкцию.
-                    ExecuteQuery.Execute(queryInsert, sConnectionTestDB);
+                    ExecuteQuery.Execute(strQueryInsert, sConnectionTestDB);
                 }
 
                 mutexObj.ReleaseMutex();
@@ -6266,6 +6266,41 @@ namespace ControlDantist
 
             MessageBox.Show("Запись завершена");
 
+            //progressBar1.Minimum = 0;
+            //progressBar1.Maximum = 100;
+
+            //this.progressBar1.Step = 1; //
+
+            //var progress = new Progress<int>();
+
+            //progress.ProgressChanged += Progress_ProgressChanged;
+
+            //Thread thread = new Thread(ParallelMethod);
+            //thread.Start();
+
+        }
+
+        private void Progress_ProgressChanged(object sender, int e)
+        {
+            //вызываем метод для увеличения шкалы progressBar.
+            progressBar1.PerformStep();
+        }
+
+        private void ParallelMethod(object progress)
+        {
+
+            int iCouint = 0;
+
+            for(int i= 0; i<= 100; i++)
+            {
+                var threadCurrent = Thread.CurrentThread;
+                threadCurrent.IsBackground = true;
+                Thread.Sleep(300);
+
+                iCouint++;
+            }
+
+            MessageBox.Show("Параллельная работа завершена");
         }
 
         private string WriteTabEspbEsrn(DataTable tabEsrn, string region)
@@ -6289,6 +6324,7 @@ namespace ControlDantist
                 DateTime ДатаРождения;
                 string Адрес = string.Empty;
                 string Район = string.Empty;
+                string Снилс = string.Empty;
 
                 if (!DBNull.Value.Equals(row["GUID"]))
                 {
@@ -6399,17 +6435,17 @@ namespace ControlDantist
                     Адрес = "";
                 }
 
-                // Район.
-                //if (!DBNull.Value.Equals(row["Район"]))
-                //{
-                //    Район = row["Район"].ToString();
-                //}
-                //else
-                //{
-                //    Район = "";
-                //}
+                // СНИЛС.
+                if (!DBNull.Value.Equals(row["СНИЛС"]))
+                {
+                    Снилс = row["СНИЛС"].ToString();
+                }
+                else
+                {
+                    Снилс = "";
+                }
 
-                IQuery queryInsert = new QueryInsertResultat(psGuid, СерияДокумента, НомерДокумента, НазваниеДокумента, ДатаДокумента, Категория, Фамилия, Имя, Отчество, ДатаРождения, Адрес, region);
+                IQuery queryInsert = new QueryInsertResultat(psGuid, СерияДокумента, НомерДокумента, НазваниеДокумента, ДатаДокумента, Категория, Фамилия, Имя, Отчество, ДатаРождения, Адрес, region, Снилс);
                 stringBuilder.Append(queryInsert.Query());
 
             }
